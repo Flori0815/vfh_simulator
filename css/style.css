@@ -1,0 +1,342 @@
+/* ===================================================================
+   VHF Simulator — layout, faceplate overlay positioning, LCD look.
+   Button/knob positions are calibrated in % against the cropped photos
+   in assets/img/ (m503-panel.png is 410x300, ds100-panel.jpg 392x270),
+   so the same percentages hold at any render size — see the pixel
+   coordinates derived in the build notes / docs/MENU-STRUCTURE.md.
+   =================================================================== */
+
+:root {
+  --bg: #0b1420;
+  --bg-panel: #0f1e2e;
+  --ink: #d7e4ef;
+  --ink-dim: #8fa3b5;
+  --accent: #35c2e8;
+  --accent-warn: #ff4d4d;
+  --lcd-ink: #26301f;
+  --lcd-ink-dim: #5a6650;
+  --focus-ring: 0 0 0 3px rgba(53, 194, 232, 0.55);
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #1b2e40;
+  flex-wrap: wrap;
+}
+.app-header h1 {
+  font-size: 1.05rem;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.app-header__sub {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+.app-header__tabs { display: none; gap: 0.4rem; }
+
+.tab-btn {
+  background: #142234;
+  color: var(--ink-dim);
+  border: 1px solid #1e3448;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.tab-btn.is-active { background: var(--accent); color: #04222c; border-color: var(--accent); font-weight: 600; }
+
+.rig {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.unit {
+  background: var(--bg-panel);
+  border: 1px solid #16283a;
+  border-radius: 18px;
+  padding: 1rem;
+  width: min(100%, 480px);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+.panel-frame {
+  position: relative;
+  width: 100%;
+  user-select: none;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.panel-frame--m503 { aspect-ratio: 410 / 300; background: #05090d; }
+.panel-frame--ds100 { aspect-ratio: 392 / 270; }
+
+.panel-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- generic overlay control look: invisible until interacted with,
+   so the original photo reads through, with a clear affordance on
+   hover/focus/active. ---------- */
+.ctrl {
+  position: absolute;
+  appearance: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.001); /* keep hit-testable, invisible */
+  cursor: pointer;
+  border-radius: 6px;
+  color: transparent;
+  padding: 0;
+  transition: box-shadow 0.12s ease, background 0.12s ease;
+}
+.ctrl:hover { box-shadow: inset 0 0 0 2px rgba(53, 194, 232, 0.55); }
+.ctrl:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.ctrl:active,
+.ctrl.is-pressed { background: rgba(53, 194, 232, 0.28); box-shadow: inset 0 0 0 2px rgba(53, 194, 232, 0.85); }
+.ctrl.is-armed { background: rgba(255, 77, 77, 0.35); box-shadow: inset 0 0 0 2px rgba(255, 77, 77, 0.9); }
+.ctrl.is-latched { background: rgba(53, 194, 232, 0.3); box-shadow: inset 0 0 0 2px var(--accent); animation: latch-pulse 1.4s ease-in-out infinite; }
+@keyframes latch-pulse { 50% { box-shadow: inset 0 0 0 2px rgba(53, 194, 232, 0.55); } }
+
+/* ---------- rotary knobs ---------- */
+.knob {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  touch-action: none;
+}
+.knob:active, .knob.knob--active { cursor: grabbing; }
+.knob:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 50%; }
+.knob__indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.knob__indicator::after {
+  content: "";
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 10%;
+  height: 26%;
+  background: rgba(53, 194, 232, 0.9);
+  border-radius: 3px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 6px rgba(53, 194, 232, 0.8);
+}
+.knob-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+/* ============================ IC-M503 ============================ */
+.ctrl--m503-16      { left: 77.3%; top: 23.3%; width: 10.5%; height: 11.3%; }
+.ctrl--m503-dual     { left: 32.9%; top: 47.3%; width: 11.5%; height: 8.3%; }
+.ctrl--m503-scan      { left: 48.0%; top: 46.7%; width: 11.7%; height: 10.0%; }
+.ctrl--m503-dial       { left: 62.7%; top: 47.3%; width: 11.7%; height: 7.7%; }
+.ctrl--m503-call        { left: 77.3%; top: 47.3%; width: 11.0%; height: 7.7%; }
+.ctrl--m503-power         { left: 19.3%; top: 63.0%; width: 9.8%;  height: 6.7%; }
+.ctrl--m503-hilo          { left: 32.9%; top: 61.3%; width: 12.0%; height: 8.3%; }
+.ctrl--m503-dimmer        { left: 77.3%; top: 61.3%; width: 11.0%; height: 8.3%; }
+
+.knob--m503-vol     { left: 14.6%; top: 83.3%; width: 11.2%; }
+.knob--m503-sql      { left: 35.4%; top: 83.3%; width: 11.2%; }
+.knob--m503-channel   { left: 62.2%; top: 75.0%; width: 26.8%; }
+.knob-label--m503-vol { left: 14.6%; top: 96.5%; }
+.knob-label--m503-sql  { left: 35.4%; top: 96.5%; }
+
+.ctrl--m503-scan span { display: block; font-size: 0.55rem; }
+.ctrl--m503-scan small { display: block; font-size: 0.4rem; }
+
+.lcd--m503 {
+  position: absolute;
+  left: 33.4%; top: 16.7%; width: 39.0%; height: 23.3%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3% 4%;
+  pointer-events: none;
+  font-family: "Courier New", ui-monospace, monospace;
+  color: var(--lcd-ink);
+  font-variant-numeric: tabular-nums;
+}
+.lcd-row { display: flex; gap: 0.35em; font-size: clamp(0.42rem, 1.5vw, 0.62rem); font-weight: 700; letter-spacing: 0.02em; line-height: 1; }
+.lcd-row .ind { visibility: hidden; }
+.lcd-row .ind.is-on { visibility: visible; }
+.ind--right { margin-left: auto; }
+.lcd-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  font-weight: 700;
+}
+.lcd-callchan { font-size: clamp(0.4rem, 1.3vw, 0.55rem); visibility: hidden; }
+.lcd-callchan.is-on { visibility: visible; }
+.lcd-channum { font-size: clamp(1.1rem, 6vw, 2.1rem); line-height: 1; }
+.lcd-group { font-size: clamp(0.42rem, 1.5vw, 0.62rem); font-weight: 700; }
+.lcd-row--bottom { font-size: clamp(0.4rem, 1.3vw, 0.58rem); font-weight: 600; color: var(--lcd-ink-dim); }
+.lcd-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
+.lcd--m503 { filter: contrast(calc(0.55 + var(--m503-contrast, 0.5) * 0.9)); }
+.lcd-channum.is-flashing { animation: blink 1s steps(2, start) infinite; }
+@keyframes blink { 50% { opacity: 0.15; } }
+.unit--m503:not(.is-powered) .panel-photo { filter: brightness(0.82) saturate(0.85); }
+
+/* ============================= DS-100 ============================= */
+.ctrl--ds100-distress {
+  left: 12.8%; top: 63.0%; width: 11.5%; height: 20.4%;
+  border-radius: 10px;
+}
+.distress-cover {
+  position: absolute; inset: 0;
+  border-radius: 10px;
+  background: rgba(255, 77, 77, 0.0);
+  transition: background 0.15s ease, transform 0.15s ease;
+  transform-origin: top center;
+}
+.ctrl--ds100-distress.is-armed .distress-cover {
+  background: rgba(255, 77, 77, 0.35);
+  box-shadow: inset 0 0 0 2px rgba(255, 77, 77, 0.95);
+}
+.distress-label { display: none; }
+
+.ctrl--ds100-clr  { left: 26.1%; top: 67.6%; width: 9.6%; height: 12.0%; }
+.ctrl--ds100-call  { left: 37.0%; top: 67.6%; width: 9.6%; height: 12.0%; }
+.ctrl--ds100-ent    { left: 47.8%; top: 67.6%; width: 9.6%; height: 12.0%; }
+
+.ctrl--ds100-up    { left: 74.0%; top: 63.0%; width: 7.7%; height: 9.3%; }
+.ctrl--ds100-left   { left: 63.8%; top: 68.5%; width: 7.7%; height: 9.3%; }
+.ctrl--ds100-right   { left: 84.2%; top: 68.5%; width: 7.7%; height: 9.3%; }
+.ctrl--ds100-down     { left: 74.0%; top: 77.8%; width: 7.7%; height: 8.3%; }
+
+.ctrl--ds100-key {
+  left: calc(63.8% + var(--kx) * 10.2%);
+  top: calc(11.1% + var(--ky) * 12.05%);
+  width: 7.7%;
+  height: 6.5%;
+}
+
+.lcd--ds100 {
+  position: absolute;
+  left: 10.8%; top: 14.8%; width: 46.6%; height: 31.5%;
+  padding: 4% 5%;
+  pointer-events: none;
+  font-family: "Courier New", ui-monospace, monospace;
+  color: #3b2a12;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+}
+.lcd-title { font-size: clamp(0.4rem, 1.4vw, 0.56rem); font-weight: 700; letter-spacing: 0.03em; }
+.lcd-body { font-size: clamp(0.5rem, 1.9vw, 0.75rem); font-weight: 700; white-space: pre-line; line-height: 1.35; flex: 1; }
+.lcd-foot { font-size: clamp(0.38rem, 1.3vw, 0.52rem); font-weight: 600; opacity: 0.85; }
+.lcd--ds100 {
+  background: rgb(234, 132, 83); /* occludes the demo text baked into the photo's LCD */
+  filter: contrast(calc(0.6 + var(--ds100-contrast, 0.5) * 0.8))
+    brightness(calc(0.75 + var(--ds100-brightness, 0.5) * 0.5));
+}
+
+.unit-status {
+  margin-top: 0.75rem;
+  min-height: 1.4rem;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+/* ---------------------------- debug panel ---------------------------- */
+.debug-panel {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border: 1px dashed #23405a;
+  border-radius: 10px;
+  background: #0c1926;
+}
+.debug-panel h2 {
+  font-size: 0.78rem;
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+  color: var(--ink-dim);
+}
+.debug-panel__hint { font-weight: 400; display: block; margin-top: 0.15rem; }
+.debug-panel__buttons { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.debug-panel__buttons button {
+  background: #142234;
+  color: var(--ink);
+  border: 1px solid #1e3448;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.debug-panel__buttons button:hover { border-color: var(--accent); }
+
+/* --------------------------------- toast --------------------------------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translate(-50%, 12px);
+  background: #10202f;
+  border: 1px solid #24425c;
+  color: var(--ink);
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 50;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+
+.app-footer {
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 0.72rem;
+  padding: 1rem 1.25rem 2rem;
+}
+.app-footer code { color: var(--ink); }
+
+/* ================================ responsive ================================ */
+@media (max-width: 880px) {
+  .app-header__tabs { display: flex; }
+  .rig { flex-direction: column; align-items: stretch; padding: 1rem; gap: 1rem; }
+  .unit { width: 100%; }
+  .unit[data-unit-panel] { display: none; }
+  .unit[data-unit-panel].is-active-tab { display: block; }
+}

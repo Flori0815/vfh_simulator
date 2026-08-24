@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VHF Simulator — Icom IC-M503 / DS-100</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%BB%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="app-header">
+  <h1>VHF Simulator <span class="app-header__sub">Icom IC-M503 + DS-100 DSC Controller</span></h1>
+  <div class="app-header__tabs" id="mobile-tabs">
+    <button class="tab-btn is-active" data-target="m503">Radio</button>
+    <button class="tab-btn" data-target="ds100">DSC Controller</button>
+  </div>
+</header>
+
+<main class="rig">
+
+  <!-- ============================ IC-M503 ============================ -->
+  <section class="unit unit--m503" id="unit-m503" data-unit-panel="m503">
+    <div class="panel-frame panel-frame--m503">
+      <img class="panel-photo" src="assets/img/m503-panel.png" alt="Icom IC-M503 front panel" draggable="false">
+
+      <div class="lcd lcd--m503" id="m503-lcd">
+        <div class="lcd-row lcd-row--top">
+          <span class="ind" data-ind="busy">BUSY</span>
+          <span class="ind" data-ind="tx">TX</span>
+          <span class="ind ind--right" data-ind="int">INT</span>
+        </div>
+        <div class="lcd-row lcd-row--mid">
+          <span class="ind" data-ind="pwr">25W</span>
+          <span class="ind" data-ind="tag">TAG</span>
+          <span class="ind" data-ind="sc">SC</span>
+          <span class="ind" data-ind="dup">DUP</span>
+          <span class="ind ind--right" data-ind="watch">DUAL</span>
+        </div>
+        <div class="lcd-main">
+          <span class="lcd-callchan" data-ind="call">CALL</span>
+          <span class="lcd-channum" id="m503-channum">16</span>
+          <span class="lcd-group" id="m503-group">INTL</span>
+        </div>
+        <div class="lcd-row lcd-row--bottom">
+          <span class="lcd-name" id="m503-name"></span>
+        </div>
+      </div>
+
+      <button class="ctrl ctrl--m503-16" id="m503-btn-16" type="button" aria-label="Channel 16 / distress &amp; safety">16</button>
+      <button class="ctrl ctrl--m503-dual" id="m503-btn-dual" type="button" aria-label="Dualwatch / Tri-watch">DUAL</button>
+      <button class="ctrl ctrl--m503-scan" id="m503-btn-scan" type="button" aria-label="Scan / Tag channel"><span>SCAN</span><small>TAG</small></button>
+      <button class="ctrl ctrl--m503-dial" id="m503-btn-dial" type="button" aria-label="Dial / exit">DIAL</button>
+      <button class="ctrl ctrl--m503-call" id="m503-btn-call" type="button" aria-label="Call channel">CALL</button>
+      <button class="ctrl ctrl--m503-power" id="m503-btn-power" type="button" aria-label="Power">POWER</button>
+      <button class="ctrl ctrl--m503-hilo" id="m503-btn-hilo" type="button" aria-label="High / Low power, modifier key">HI/LO</button>
+      <button class="ctrl ctrl--m503-dimmer" id="m503-btn-dimmer" type="button" aria-label="Dimmer / Intercom">DIMMER</button>
+
+      <div class="knob knob--m503-vol" id="m503-knob-vol"><div class="knob__indicator"></div></div>
+      <div class="knob knob--m503-sql" id="m503-knob-sql"><div class="knob__indicator"></div></div>
+      <div class="knob knob--m503-channel" id="m503-knob-channel"><div class="knob__indicator"></div></div>
+      <span class="knob-label knob-label--m503-vol">VOL</span>
+      <span class="knob-label knob-label--m503-sql">SQL</span>
+    </div>
+
+    <div class="unit-status" id="m503-status" aria-live="polite"></div>
+  </section>
+
+  <!-- ============================= DS-100 ============================= -->
+  <section class="unit unit--ds100" id="unit-ds100" data-unit-panel="ds100">
+    <div class="panel-frame panel-frame--ds100">
+      <img class="panel-photo" src="assets/img/ds100-panel.jpg" alt="Icom DS-100 DSC controller front panel" draggable="false">
+
+      <div class="lcd lcd--ds100" id="ds100-lcd">
+        <div class="lcd-title" id="ds100-title">-VHF DSC CONTROLLER-</div>
+        <div class="lcd-body" id="ds100-body">CH70 WATCHING</div>
+        <div class="lcd-foot" id="ds100-foot"></div>
+      </div>
+
+      <button class="ctrl ctrl--ds100-distress" id="ds100-btn-distress" type="button" aria-label="Distress — hold 5 seconds">
+        <span class="distress-cover"></span>
+        <span class="distress-label">DISTRESS</span>
+      </button>
+      <button class="ctrl ctrl--ds100-clr" id="ds100-btn-clr" type="button" aria-label="Clear">CLR</button>
+      <button class="ctrl ctrl--ds100-call" id="ds100-btn-call" type="button" aria-label="Call menu">CALL</button>
+      <button class="ctrl ctrl--ds100-ent" id="ds100-btn-ent" type="button" aria-label="Enter">ENT</button>
+
+      <button class="ctrl ctrl--ds100-up" id="ds100-btn-up" type="button" aria-label="Up">▲</button>
+      <button class="ctrl ctrl--ds100-down" id="ds100-btn-down" type="button" aria-label="Down">▼</button>
+      <button class="ctrl ctrl--ds100-left" id="ds100-btn-left" type="button" aria-label="Left">◀</button>
+      <button class="ctrl ctrl--ds100-right" id="ds100-btn-right" type="button" aria-label="Right">▶</button>
+
+      <button class="ctrl ctrl--ds100-key" data-key="1" style="--kx:0;--ky:0" type="button">1</button>
+      <button class="ctrl ctrl--ds100-key" data-key="2" style="--kx:1;--ky:0" type="button">2</button>
+      <button class="ctrl ctrl--ds100-key" data-key="3" style="--kx:2;--ky:0" type="button">3</button>
+      <button class="ctrl ctrl--ds100-key" data-key="4" style="--kx:0;--ky:1" type="button">4</button>
+      <button class="ctrl ctrl--ds100-key" data-key="5" style="--kx:1;--ky:1" type="button">5</button>
+      <button class="ctrl ctrl--ds100-key" data-key="6" style="--kx:2;--ky:1" type="button">6</button>
+      <button class="ctrl ctrl--ds100-key" data-key="7" style="--kx:0;--ky:2" type="button">7</button>
+      <button class="ctrl ctrl--ds100-key" data-key="8" style="--kx:1;--ky:2" type="button">8</button>
+      <button class="ctrl ctrl--ds100-key" data-key="9" style="--kx:2;--ky:2" type="button">9</button>
+      <button class="ctrl ctrl--ds100-key" data-key="Aa" style="--kx:0;--ky:3" type="button">A/a</button>
+      <button class="ctrl ctrl--ds100-key" data-key="0" style="--kx:1;--ky:3" type="button">0</button>
+      <button class="ctrl ctrl--ds100-key" data-key="BS" style="--kx:2;--ky:3" type="button">BS</button>
+    </div>
+
+    <div class="unit-status" id="ds100-status" aria-live="polite"></div>
+
+    <div class="debug-panel" id="debug-panel">
+      <h2>Simulate incoming DSC traffic <span class="debug-panel__hint">(stand-in for Stage 2's AI-generated traffic — see docs/ROADMAP.md)</span></h2>
+      <div class="debug-panel__buttons">
+        <button type="button" data-sim="distress">Incoming distress</button>
+        <button type="button" data-sim="individual">Individual call</button>
+        <button type="button" data-sim="group">Group call</button>
+        <button type="button" data-sim="all_ships">All ships (urgency)</button>
+        <button type="button" data-sim="position_request">Position request</button>
+        <button type="button" data-sim="distress_ack">Distress ACK</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<footer class="app-footer">
+  Front-panel photos and menu structure sourced from the original Icom
+  IC-M503 and DS-100 instruction manuals (<code>assets/manuals/</code>).
+  Not affiliated with or endorsed by Icom Inc.
+</footer>
+
+<script src="js/knob.js"></script>
+<script src="js/channels.js"></script>
+<script src="js/dsc-bus.js"></script>
+<script src="js/m503.js"></script>
+<script src="js/ds100.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
