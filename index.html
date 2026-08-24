@@ -13,6 +13,7 @@
   <div class="app-header__tabs" id="mobile-tabs">
     <button class="tab-btn is-active" data-target="m503">Radio</button>
     <button class="tab-btn" data-target="ds100">DSC Controller</button>
+    <button class="tab-btn" data-target="training">Training</button>
   </div>
 </header>
 
@@ -120,6 +121,19 @@
 
 </main>
 
+<section class="training" id="training-panel" data-unit-panel="training">
+  <div class="training__browser">
+    <div class="training__intro">
+      <h2>SRC Prüfungstraining</h2>
+      <p>105 Prüfungsaufgaben aus dem offiziellen DSV/DMYV-Aufgabenkatalog. Gerätebasierte Aufgaben werden hier automatisch geprüft; Sprechfunk-Inhalte (MAYDAY, PAN PAN, SECURITE, Buchstabieren …) zeigen den vorgeschriebenen Wortlaut zum lauten Mitsprechen und werden bis zur Spracherkennung selbst bestätigt.</p>
+    </div>
+    <div class="training__categories" id="training-categories"></div>
+  </div>
+  <div class="training__detail" id="training-detail">
+    <div class="training__placeholder">Wähle links eine Aufgabe aus der Liste.</div>
+  </div>
+</section>
+
 <div class="toast" id="toast"></div>
 
 <footer class="app-footer">
@@ -132,7 +146,11 @@
 <script src="js/channels.js"></script>
 <script src="js/dsc-bus.js"></script>
 <script src="js/m503.js"></script>
+<script src="js/ds100-screens.js"></script>
 <script src="js/ds100.js"></script>
+<script src="js/challenges-data.js"></script>
+<script src="js/challenges.js"></script>
+<script src="js/challenge-ui.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

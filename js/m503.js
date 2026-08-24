@@ -71,6 +71,9 @@
       nameEdit: null, // { chars: string[], cursor: number }
       heldButtons: new Set(),
       hiloConsumed: false,
+      // Rolling log of meaningful events, newest last — inspected by the
+      // exam-challenge validators in js/challenges.js.
+      log: [],
       // HI/LO's secondary functions are physically "hold HI/LO, press another
       // key" — impossible for a single mouse pointer (only real on a touch
       // screen with two fingers, or two hands on the real device). hiloLatched
@@ -83,6 +86,10 @@
 
     function toast(msg) {
       if (global.simToast) global.simToast(msg);
+    }
+    function log(type, data) {
+      state.log.push(Object.assign({ type, at: Date.now() }, data));
+      if (state.log.length > 500) state.log.shift();
     }
     function beep() {
       /* placeholder for a future audio cue; state.beep gates it */
@@ -110,6 +117,7 @@
       } else {
         state.mode = "normal";
       }
+      log("power_on", { setMode: !!intoSetMode });
       render();
     }
     function powerOff() {
@@ -120,6 +128,7 @@
       state.intercom = false;
       state.programmingCall = false;
       state.nameEdit = null;
+      log("power_off", {});
       render();
     }
 
@@ -143,6 +152,7 @@
       }
       if (state.scanning) state.scanning = false;
       state.channel = global.VHFChannels.nextChannel(state.channel, dir);
+      log("channel", { channel: state.channel });
       render();
     }
 
@@ -206,6 +216,7 @@
       state.hi = true;
       state.mode = "ch16";
       state.scanning = false;
+      log("ch16_select", {});
       render();
     }
 
@@ -248,6 +259,7 @@
       const groups = ["INTL", "USA", "HOLLAND", "ATIS", "DSC"];
       const idx = groups.indexOf(state.group);
       state.group = groups[(idx + 1) % groups.length];
+      log("group", { group: state.group });
       if (state.group !== "INTL") {
         toast(`${state.group} channel plan is not modeled in this simulator yet — showing International frequencies`);
       }
@@ -339,6 +351,7 @@
       } else {
         state.dual = state.dualTriChoice;
       }
+      log("dual", { dual: state.dual });
       render();
     }
 
@@ -380,6 +393,7 @@
       if (state.hiloLatched) return render(); // just armed by this press; stays latched after release
       if (!state.hiloConsumed) {
         state.hi = !state.hi;
+        log("power_level", { hi: state.hi });
       }
       render();
     }
@@ -598,13 +612,19 @@
       continuous: false,
       value: state.volume,
       label: "Volume",
-      onChange: (v) => (state.volume = v),
+      onChange: (v) => {
+        state.volume = v;
+        log("volume", { volume: v });
+      },
     });
     new global.RotaryKnob(el.knobSql, {
       continuous: false,
       value: state.squelch,
       label: "Squelch",
-      onChange: (v) => (state.squelch = v),
+      onChange: (v) => {
+        state.squelch = v;
+        log("squelch", { squelch: v });
+      },
     });
     new global.RotaryKnob(el.knobChannel, {
       continuous: true,

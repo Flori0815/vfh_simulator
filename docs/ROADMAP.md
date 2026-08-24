@@ -31,26 +31,43 @@ in that file. That boundary is the integration point for Stage 2:
   persistent MMSIs/callsigns, plus optional speech-to-text/text-to-speech
   for the voice portion of a call.
 
-## Stage 3 — German "Seefunkzeugnis" exam trainer
+## Stage 3 — German "Seefunkzeugnis" exam trainer (in progress)
 The exam (SRC — Short Range Certificate / UBI — Long Range) tests exactly
 the procedures this simulator already models: correct distress/urgency/
 safety call structure, correct channel usage (16 vs. 70 vs. working
 channels), DSC procedure, phonetic alphabet, and standard phrases.
-Planned structure:
 
-- `docs/exam/` — question bank and scenario definitions (not yet built),
-  written from the German Seefunk syllabus (Telekom-Regulierungsbehörde /
-  Bundesnetzagentur SRC/LRC curriculum), kept separate from the simulator
-  code so content can grow independently.
-- A **scenario runner** that scripts an incoming situation (e.g. "you hear
-  another vessel's Mayday on Ch16 — what do you do?") and drives it through
-  the same `dscBus`/UI the simulator already has, then grades the user's
-  actual button presses and any free-text voice-procedure answers against
-  a checklist derived from `docs/MENU-STRUCTURE.md`.
-- A lighter-weight **quiz mode** for the theory questions (regulations,
-  frequency plan, phonetic alphabet, prowords) that doesn't need the radio
-  UI at all.
+**Built so far**: `docs/Test_questions` is the official 105-task DSV/DMYV
+practical-exam catalog (German). `js/challenges-data.js` is that catalog
+parsed into structured data; `js/challenges.js` layers automated grading
+onto the ~30 tasks that are fully device-driven (power/channel/mode
+state, DSC transmissions, menu navigation — all checked against the
+`state.log` action log on `m503`/`ds100`, never by inspecting the DOM),
+and turns everything else into a self-certified script/checklist for the
+voice procedures (MAYDAY, PAN PAN, SECURITE, phonetic alphabet, …) that
+can't be graded until audio recognition lands. `js/challenge-ui.js` is the
+category → challenge → live-checklist browser, under the "Training" tab.
+
+**Still to do**:
+- Audio recognition (Stage 2's territory) to grade the voice/procedure
+  tasks for real instead of self-certifying them.
+- A scenario runner that scripts an incoming situation end-to-end (e.g.
+  "you hear another vessel's Mayday on Ch16 — what do you do?") using
+  `dscBus`, rather than each task being graded independently.
+- A lighter-weight quiz mode for pure theory questions (regulations,
+  frequency plan) that doesn't need the radio UI at all.
 
 Stage 2 and Stage 3 share the same event bus, so a training scenario can
 literally be "the AI plays the distressed vessel, you play the operator" —
 i.e. Stage 3 exercises are Stage 2 traffic with grading on top.
+
+## Architecture note: config-driven vs. hardcoded
+The DS-100 is now genuinely config-driven: `js/ds100-screens.js` is a pure
+data table (one entry per LCD screen — its content *and* its input
+handling) and `js/ds100.js` is a small generic engine that interprets it,
+so adding or editing a screen never touches the engine. `js/channels.js`
+and `js/challenges-data.js`/`js/challenges.js` are the same idea for
+channel data and exam content. The IC-M503 (`js/m503.js`) is still mostly
+procedural — it's a physical-button state machine (hold-modifiers, timing)
+rather than a menu tree, which doesn't decompose into a screen table the
+same way; its Set Mode items are the one part that's already data-driven.

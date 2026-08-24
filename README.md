@@ -22,18 +22,23 @@ plain HTML/CSS/JS with no build step.
 ## Layout
 
 ```
-index.html            entry point, wires both units together
-css/style.css          all styling, responsive layout, LCD look
-js/knob.js              reusable drag/wheel rotary-knob component
-js/channels.js          VHF channel data (International list)
-js/dsc-bus.js            pub/sub bus for DSC messages (Stage 2 hook)
-js/m503.js               IC-M503 state machine + rendering
-js/ds100.js              DS-100 state machine + rendering
-js/main.js               boot, cross-unit wiring, responsive layout
-assets/img/               cropped faceplate photos used by the UI
-assets/img/source/         original uploaded photos (uncropped)
-assets/manuals/            original PDF manuals
-docs/                    functional spec + roadmap
+index.html                 entry point, wires everything together
+css/style.css               all styling, responsive layout, LCD look
+js/knob.js                   reusable drag/wheel rotary-knob component
+js/channels.js               VHF channel data (International list)
+js/dsc-bus.js                 pub/sub bus for DSC messages (Stage 2 hook)
+js/m503.js                    IC-M503 state machine + rendering
+js/ds100-screens.js            DS-100 screen table (config: content + input handling per screen)
+js/ds100.js                     DS-100 engine that interprets ds100-screens.js
+js/challenges-data.js            105-task SRC exam catalog, parsed from docs/Test_questions
+js/challenges.js                  device validators layered onto the catalog above
+js/challenge-ui.js                 Training tab: category/challenge browser + live checklist
+js/main.js                          boot, cross-unit wiring, responsive layout
+assets/img/                    cropped faceplate photos used by the UI
+assets/img/source/              original uploaded photos (uncropped)
+assets/manuals/                 original PDF manuals
+docs/Test_questions            official DSV/DMYV 105-task practical exam catalog (German)
+docs/                        functional spec + roadmap
 ```
 
 ## The knob
