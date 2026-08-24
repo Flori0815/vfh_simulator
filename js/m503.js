@@ -48,6 +48,7 @@
       group: "INTL",
       mode: "normal", // normal | ch16 | call | setmode | nameedit
       hi: true, // 25W (true) / 1W (false)
+      hiBeforeCh16: null, // power level to restore when leaving Ch16
       callChannel: null,
       dual: "off", // off | dual | tri
       dualTriChoice: "dual",
@@ -134,6 +135,10 @@
         return render();
       }
       if (state.mode === "ch16" || state.mode === "call") {
+        if (state.mode === "ch16" && state.hiBeforeCh16 != null) {
+          state.hi = state.hiBeforeCh16;
+          state.hiBeforeCh16 = null;
+        }
         state.mode = "normal";
       }
       if (state.scanning) state.scanning = false;
@@ -192,6 +197,13 @@
         state.setModeIndex = (state.setModeIndex + 1) % SET_MODE_ITEMS.length;
         return render();
       }
+      // "Output power turns to 25W automatically, whenever Channel 16 is
+      // selected" — save the prior power level (unless already parked on
+      // ch16) so DIAL can restore it on exit.
+      if (state.mode !== "ch16") {
+        state.hiBeforeCh16 = state.hi;
+      }
+      state.hi = true;
       state.mode = "ch16";
       state.scanning = false;
       render();
@@ -215,6 +227,10 @@
         return;
       }
       if (state.mode === "ch16" || state.mode === "call") {
+        if (state.mode === "ch16" && state.hiBeforeCh16 != null) {
+          state.hi = state.hiBeforeCh16; // "Output power returns to the previous output power automatically"
+          state.hiBeforeCh16 = null;
+        }
         state.mode = "normal";
         render();
       }
@@ -599,7 +615,16 @@
 
     render();
 
-    return { state, render, powerOn, powerOff };
+    return { state, render, powerOn, powerOff, selectCh16: on16Tap, selectChannel: (n) => {
+      if (!state.power) return;
+      if (state.mode === "ch16" && state.hiBeforeCh16 != null) {
+        state.hi = state.hiBeforeCh16;
+        state.hiBeforeCh16 = null;
+      }
+      state.mode = "normal";
+      state.channel = n;
+      render();
+    } };
   }
 
   global.createM503 = createM503;

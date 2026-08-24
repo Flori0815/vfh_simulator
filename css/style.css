@@ -124,6 +124,10 @@ html, body {
 .ctrl.is-armed { background: rgba(255, 77, 77, 0.35); box-shadow: inset 0 0 0 2px rgba(255, 77, 77, 0.9); }
 .ctrl.is-latched { background: rgba(53, 194, 232, 0.3); box-shadow: inset 0 0 0 2px var(--accent); animation: latch-pulse 1.4s ease-in-out infinite; }
 @keyframes latch-pulse { 50% { box-shadow: inset 0 0 0 2px rgba(53, 194, 232, 0.55); } }
+/* Unmistakable press feedback regardless of what's already drawn in the
+   photo underneath (e.g. the CH16 button, permanently lit blue) — every
+   control flashes bright white for a beat on press. */
+.ctrl.is-flash { background: rgba(255, 255, 255, 0.55) !important; }
 
 /* ---------- rotary knobs ---------- */
 .knob {
@@ -251,17 +255,31 @@ html, body {
 .lcd--ds100 {
   position: absolute;
   left: 10.8%; top: 14.8%; width: 46.6%; height: 31.5%;
-  padding: 4% 5%;
+  /* Percentage padding always resolves against the containing block's
+     WIDTH (even top/bottom) — on this wide-but-short box, a "vertical"
+     percentage ate most of the available height. Fixed px for top/bottom
+     avoids that; horizontal stays a percentage since width-relative there
+     is exactly what we want. */
+  padding: 2px 5%;
   pointer-events: none;
   font-family: "Courier New", ui-monospace, monospace;
   color: #3b2a12;
   display: flex;
   flex-direction: column;
-  gap: 0.35em;
+  gap: 2px;
+  overflow: hidden;
 }
-.lcd-title { font-size: clamp(0.4rem, 1.4vw, 0.56rem); font-weight: 700; letter-spacing: 0.03em; }
-.lcd-body { font-size: clamp(0.5rem, 1.9vw, 0.75rem); font-weight: 700; white-space: pre-line; line-height: 1.35; flex: 1; }
-.lcd-foot { font-size: clamp(0.38rem, 1.3vw, 0.52rem); font-weight: 600; opacity: 0.85; }
+.lcd-title { font-size: clamp(0.4rem, 1.4vw, 0.56rem); font-weight: 700; letter-spacing: 0.03em; flex: none; }
+.lcd-body {
+  font-size: clamp(0.4rem, 1.6vw, 0.62rem);
+  font-weight: 700;
+  white-space: pre-line;
+  line-height: 1.25;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.lcd-foot { font-size: clamp(0.34rem, 1.1vw, 0.44rem); font-weight: 600; opacity: 0.85; flex: none; }
 .lcd--ds100 {
   background: rgb(234, 132, 83); /* occludes the demo text baked into the photo's LCD */
   filter: contrast(calc(0.6 + var(--ds100-contrast, 0.5) * 0.8))

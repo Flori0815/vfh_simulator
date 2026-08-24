@@ -695,6 +695,27 @@
       return ed.chars.map((c) => (mask ? "*" : c)).join("") || "";
     }
 
+    // The real LCD only shows a handful of lines at once; long lists (the
+    // subject menu, the 12 distress natures, …) scroll with the selection
+    // rather than dumping every item, which is also what keeps the text
+    // from overflowing the display area.
+    const MAX_LIST_LINES = 5;
+    function windowLines(lines, selectedIndex, maxLines) {
+      maxLines = maxLines || MAX_LIST_LINES;
+      if (lines.length <= maxLines) return lines.join("\n");
+      const idx = selectedIndex || 0;
+      let start = Math.min(
+        Math.max(0, idx - Math.floor((maxLines - 1) / 2)),
+        lines.length - maxLines
+      );
+      const windowed = lines.slice(start, start + maxLines);
+      if (start > 0) windowed[0] = "↑" + windowed[0].slice(1);
+      if (start + maxLines < lines.length) {
+        windowed[windowed.length - 1] = "↓" + windowed[windowed.length - 1].slice(1);
+      }
+      return windowed.join("\n");
+    }
+
     function render() {
       const f = state.flow;
       let title = "";
@@ -714,7 +735,10 @@
         }
         case "menu":
           title = "<Select a subject>";
-          body = SUBJECT_ITEMS.map((s, i) => (i === state.menuIndex ? `≣${s}` : ` ${s}`)).join("\n");
+          body = windowLines(
+            SUBJECT_ITEMS.map((s, i) => (i === state.menuIndex ? `≣${s}` : ` ${s}`)),
+            state.menuIndex
+          );
           foot = "▲▼ select · ENT open · CLR exit";
           break;
         case "distressWaiting":
@@ -756,9 +780,12 @@
           break;
         case "individualSelect":
           title = "<Select an address ID>";
-          body = [...state.addressBook.map((a) => a.name), "Manual entry"]
-            .map((n, i) => (i === f.index ? `≣${n}` : ` ${n}`))
-            .join("\n");
+          body = windowLines(
+            [...state.addressBook.map((a) => a.name), "Manual entry"].map((n, i) =>
+              i === f.index ? `≣${n}` : ` ${n}`
+            ),
+            f.index
+          );
           foot = "▲▼ select · ENT next";
           break;
         case "individualManualId":
@@ -773,9 +800,12 @@
           break;
         case "groupSelect":
           title = "<Select a group>";
-          body = [...state.groupBook.map((g) => g.name), "Manual entry"]
-            .map((n, i) => (i === f.index ? `≣${n}` : ` ${n}`))
-            .join("\n");
+          body = windowLines(
+            [...state.groupBook.map((g) => g.name), "Manual entry"].map((n, i) =>
+              i === f.index ? `≣${n}` : ` ${n}`
+            ),
+            f.index
+          );
           foot = "▲▼ select · ENT next";
           break;
         case "groupManualId":
@@ -808,16 +838,22 @@
         case "receivedDistressList":
           title = "<Select a message>";
           body = state.receivedDistress.length
-            ? state.receivedDistress
-                .map((e, i) => `${i === f.index ? "≣" : " "}${i + 1}: Distress  ${e.at.toTimeString().slice(0, 5)}`)
-                .join("\n")
+            ? windowLines(
+                state.receivedDistress.map(
+                  (e, i) => `${i === f.index ? "≣" : " "}${i + 1}: Distress  ${e.at.toTimeString().slice(0, 5)}`
+                ),
+                f.index
+              )
             : "(no distress messages)";
           foot = "<CLR→Exit/ENT→OK>";
           break;
         case "receivedOtherKindList": {
           const labels = ["Individual ACK", "Individual call", "Group call", "All ships call", "Distress", "Distress relay", "Distress RLY ACK", "Distress ACK"];
           title = "<Select a message>";
-          body = labels.map((l, i) => (i === (f.index || 0) ? `≣${l}` : ` ${l}`)).join("\n");
+          body = windowLines(
+            labels.map((l, i) => (i === (f.index || 0) ? `≣${l}` : ` ${l}`)),
+            f.index || 0
+          );
           foot = "▲▼ select · ENT open";
           break;
         }
@@ -825,7 +861,12 @@
           const list = filteredOtherList(f.otherKind);
           title = "<Select a message>";
           body = list.length
-            ? list.map((e, i) => `${i === f.index ? "≣" : " "}From ${e.message.fromName || e.message.fromMMSI}  ${e.at.toTimeString().slice(0, 5)}`).join("\n")
+            ? windowLines(
+                list.map(
+                  (e, i) => `${i === f.index ? "≣" : " "}From ${e.message.fromName || e.message.fromMMSI}  ${e.at.toTimeString().slice(0, 5)}`
+                ),
+                f.index
+              )
             : "(none received)";
           foot = "<CLR→Exit/ENT→OK>";
           break;
@@ -840,17 +881,26 @@
         }
         case "distressSettingList":
           title = "<Select a nature>";
-          body = DISTRESS_NATURES.map(([, label], i) => (i === (f.index || 0) ? `≣${label}` : ` ${label}`)).join("\n");
+          body = windowLines(
+            DISTRESS_NATURES.map(([, label], i) => (i === (f.index || 0) ? `≣${label}` : ` ${label}`)),
+            f.index || 0
+          );
           foot = "▲▼ select · ENT confirm";
           break;
         case "setupMenu":
           title = "<Select a subject>";
-          body = SETUP_ITEMS.map((s, i) => (i === (f.index || 0) ? `≣${s}` : ` ${s}`)).join("\n");
+          body = windowLines(
+            SETUP_ITEMS.map((s, i) => (i === (f.index || 0) ? `≣${s}` : ` ${s}`)),
+            f.index || 0
+          );
           foot = "▲▼ select · ENT open · CLR exit";
           break;
         case "setupAddressMenu":
           title = "<Select a subject>";
-          body = ADDRESS_ITEMS.map((s, i) => (i === (f.index || 0) ? `≣${s}` : ` ${s}`)).join("\n");
+          body = windowLines(
+            ADDRESS_ITEMS.map((s, i) => (i === (f.index || 0) ? `≣${s}` : ` ${s}`)),
+            f.index || 0
+          );
           foot = "▲▼ select · ENT open";
           break;
         case "setupAddAddressId":
@@ -872,14 +922,20 @@
         case "setupDeleteAddressList":
           title = "<Delete address ID>";
           body = state.addressBook.length
-            ? state.addressBook.map((a, i) => (i === (f.index || 0) ? `≣${a.name}` : ` ${a.name}`)).join("\n")
+            ? windowLines(
+                state.addressBook.map((a, i) => (i === (f.index || 0) ? `≣${a.name}` : ` ${a.name}`)),
+                f.index || 0
+              )
             : "(empty)";
           foot = "▲▼ select · ENT delete";
           break;
         case "setupDeleteGroupList":
           title = "<Delete group ID>";
           body = state.groupBook.length
-            ? state.groupBook.map((g, i) => (i === (f.index || 0) ? `≣${g.name}` : ` ${g.name}`)).join("\n")
+            ? windowLines(
+                state.groupBook.map((g, i) => (i === (f.index || 0) ? `≣${g.name}` : ` ${g.name}`)),
+                f.index || 0
+              )
             : "(empty)";
           foot = "▲▼ select · ENT delete";
           break;

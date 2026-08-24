@@ -28,15 +28,8 @@
 
   // ---- cross-unit wiring via dscBus --------------------------------------
   function toChannelForTraffic() {
-    if (!m503.state.power) return;
-    m503.state.mode = "normal";
-    m503.state.channel = 70;
-    m503.render();
-    setTimeout(() => {
-      if (!m503.state.power) return;
-      m503.state.channel = 16;
-      m503.render();
-    }, 1500);
+    m503.selectChannel(70);
+    setTimeout(() => m503.selectCh16(), 1500);
   }
 
   window.dscBus.on("outgoing", (msg) => {
@@ -46,9 +39,7 @@
   });
   window.dscBus.on("incoming", (msg) => {
     if (["distress", "distress_relay", "distress_ack", "distress_relay_ack"].includes(msg.kind)) {
-      if (!m503.state.power) return;
-      m503.state.mode = "ch16";
-      m503.render();
+      m503.selectCh16();
     }
   });
 
@@ -74,6 +65,17 @@
       const build = SIM_PRESETS[kind];
       if (build) window.dscBus.incoming(kind, build());
     });
+  });
+
+  // Unmistakable press feedback on every control, independent of whatever
+  // that control's own logic does (see docs — the CH16 button in particular
+  // is permanently drawn blue in the photo, so its own state changes can be
+  // easy to miss; this flash never depends on app state).
+  document.addEventListener("pointerdown", (evt) => {
+    const ctrl = evt.target.closest(".ctrl");
+    if (!ctrl) return;
+    ctrl.classList.add("is-flash");
+    setTimeout(() => ctrl.classList.remove("is-flash"), 180);
   });
 
   // ---- mobile tab switcher -------------------------------------------------
