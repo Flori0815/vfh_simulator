@@ -15,6 +15,7 @@
     <button class="tab-btn" data-target="ds100">DSC Controller</button>
     <button class="tab-btn" data-target="training">Training</button>
   </div>
+  <button class="settings-btn" id="settings-open-btn" type="button" aria-label="KI-Einstellungen (Gemini API-Schlüssel)" title="KI-Einstellungen (Gemini API-Schlüssel)">⚙ KI-Einstellungen</button>
 </header>
 
 <main class="rig">
@@ -137,7 +138,7 @@
   <div class="training__browser">
     <div class="training__intro">
       <h2>SRC Prüfungstraining</h2>
-      <p>105 Prüfungsaufgaben aus dem offiziellen DSV/DMYV-Aufgabenkatalog. Gerätebasierte Aufgaben werden hier automatisch geprüft; Sprechfunk-Inhalte (MAYDAY, PAN PAN, SECURITE, Buchstabieren …) zeigen den vorgeschriebenen Wortlaut zum lauten Mitsprechen und werden bis zur Spracherkennung selbst bestätigt.</p>
+      <p>105 Prüfungsaufgaben aus dem offiziellen DSV/DMYV-Aufgabenkatalog. Gerätebasierte Aufgaben werden hier automatisch geprüft; Sprechfunk-Inhalte (MAYDAY, PAN PAN, SECURITE, Buchstabieren …) zeigen den vorgeschriebenen Wortlaut zum lauten Mitsprechen — mit hinterlegtem Gemini API-Schlüssel (⚙ KI-Einstellungen) werden sie aufgenommen, transkribiert und automatisch bewertet; alternativ per Selbstbestätigung.</p>
     </div>
     <div class="training__categories" id="training-categories"></div>
   </div>
@@ -145,6 +146,32 @@
     <div class="training__placeholder">Wähle links eine Aufgabe aus der Liste.</div>
   </div>
 </section>
+
+<div class="modal-backdrop" id="settings-backdrop" hidden>
+  <div class="modal" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <h2 id="settings-title">🤖 KI-Sprechfunk-Bewertung</h2>
+    <p class="modal__intro">Für die automatische Auswertung der Sprechfunk-Aufgaben (Aufnehmen → Transkribieren → Bewerten) wird ein <strong>Google Gemini API-Schlüssel</strong> verwendet. Er wird nur in diesem Browser gespeichert (<code>localStorage</code>) und bei jeder Aufnahme direkt von diesem Gerät an Google gesendet.</p>
+    <label class="modal__label" for="settings-api-key">Gemini API-Schlüssel</label>
+    <input class="modal__input" id="settings-api-key" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…">
+    <label class="modal__checkbox"><input type="checkbox" id="settings-show-key"> Schlüssel anzeigen</label>
+
+    <details class="modal__advanced">
+      <summary>Erweitert</summary>
+      <label class="modal__label" for="settings-model">Modell</label>
+      <input class="modal__input" id="settings-model" type="text" placeholder="gemini-flash-latest">
+      <p class="modal__hint">Standard: <code>gemini-flash-latest</code> (zeigt immer auf das aktuelle schnelle Gemini-Modell). Nur ändern, wenn ein bestimmtes Modell benötigt wird.</p>
+    </details>
+
+    <p class="modal__warning">⚠️ <strong>Sicherheitshinweis:</strong> Dies ist eine rein clientseitige Web-App ohne Server. Der Schlüssel verlässt diesen Browser nur in Anfragen direkt an Google und ist im Netzwerkverkehr dieser Seite sichtbar. Verwende auf öffentlichen/geteilten Geräten am besten einen Schlüssel mit Ausgabenlimit, den du jederzeit widerrufen kannst (Google AI Studio → API keys).</p>
+
+    <div class="modal__actions">
+      <button type="button" class="training__btn" id="settings-clear-btn">Schlüssel löschen</button>
+      <span class="modal__spacer"></span>
+      <button type="button" class="training__btn" id="settings-cancel-btn">Abbrechen</button>
+      <button type="button" class="training__btn training__btn--start" id="settings-save-btn">Speichern</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -162,6 +189,9 @@
 <script src="js/ds100.js"></script>
 <script src="js/challenges-data.js"></script>
 <script src="js/challenges.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/audio-recorder.js"></script>
+<script src="js/gemini-api.js"></script>
 <script src="js/challenge-ui.js"></script>
 <script src="js/main.js"></script>
 </body>

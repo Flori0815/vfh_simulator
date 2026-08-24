@@ -42,20 +42,38 @@ practical-exam catalog (German). `js/challenges-data.js` is that catalog
 parsed into structured data; `js/challenges.js` layers automated grading
 onto the ~30 tasks that are fully device-driven (power/channel/mode
 state, DSC transmissions, menu navigation — all checked against the
-`state.log` action log on `m503`/`ds100`, never by inspecting the DOM),
-and turns everything else into a self-certified script/checklist for the
-voice procedures (MAYDAY, PAN PAN, SECURITE, phonetic alphabet, …) that
-can't be graded until audio recognition lands. `js/challenge-ui.js` is the
-category → challenge → live-checklist browser, under the "Training" tab.
+`state.log` action log on `m503`/`ds100`, never by inspecting the DOM).
+`js/challenge-ui.js` is the category → challenge → live-checklist browser,
+under the "Training" tab.
+
+The remaining ~75 tasks are voice/procedure content (MAYDAY, PAN PAN,
+SECURITE, phonetic alphabet, …) and are now graded by a real audio
+pipeline instead of self-certification alone:
+- `js/settings.js` — a "⚙ KI-Einstellungen" modal for pasting a Google
+  Gemini API key, stored client-side only (`localStorage`) since this is
+  a static site with no backend.
+- `js/audio-recorder.js` — `getUserMedia`/`MediaRecorder` wrapper; records
+  the user's spoken call as a Blob (prefers Ogg/Opus — one of Gemini's
+  documented audio formats — falling back to whatever the browser offers).
+- `js/gemini-api.js` — calls Gemini's `generateContent` REST endpoint
+  directly from the browser (no server) with the API key in the
+  `x-goog-api-key` header: first to transcribe the recording, then to
+  grade the transcript against that task's `steps`/`criteria` using a
+  `responseSchema`-constrained JSON verdict (`pass`/`feedback`/`missing`).
+- `js/challenge-ui.js`'s voice-challenge panel drives record → transcribe
+  → evaluate → show verdict, and still offers manual self-certification
+  as a fallback when no mic or API key is available, or when the grader
+  gets it wrong.
 
 **Still to do**:
-- Audio recognition (Stage 2's territory) to grade the voice/procedure
-  tasks for real instead of self-certifying them.
 - A scenario runner that scripts an incoming situation end-to-end (e.g.
   "you hear another vessel's Mayday on Ch16 — what do you do?") using
   `dscBus`, rather than each task being graded independently.
 - A lighter-weight quiz mode for pure theory questions (regulations,
   frequency plan) that doesn't need the radio UI at all.
+- Once Stage 2's AI-generated traffic exists, the same Gemini pipeline can
+  likely drive both sides of a call (NPC voice + grading the user's reply)
+  instead of only grading solo scripted tasks.
 
 Stage 2 and Stage 3 share the same event bus, so a training scenario can
 literally be "the AI plays the distressed vessel, you play the operator" —

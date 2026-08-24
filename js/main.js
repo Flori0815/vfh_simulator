@@ -26,6 +26,7 @@
   // Exposed for debugging / future automated exercises (Stage 3 grading).
   window.simState = { m503, ds100 };
   window.initChallengeUI(window.simState);
+  window.initSettingsUI();
 
   // ---- cross-unit wiring via dscBus --------------------------------------
   function toChannelForTraffic() {

@@ -32,8 +32,12 @@ js/ds100-screens.js            DS-100 screen table (config: content + input hand
 js/ds100.js                     DS-100 engine that interprets ds100-screens.js
 js/challenges-data.js            105-task SRC exam catalog, parsed from docs/Test_questions
 js/challenges.js                  device validators layered onto the catalog above
-js/challenge-ui.js                 Training tab: category/challenge browser + live checklist
-js/main.js                          boot, cross-unit wiring, responsive layout
+js/settings.js                     "KI-Einstellungen" modal: Gemini API key in localStorage
+js/audio-recorder.js                getUserMedia/MediaRecorder wrapper for voice challenges
+js/gemini-api.js                     Gemini REST client: speech-to-text + AI call grading
+js/challenge-ui.js                    Training tab: category/challenge browser, live checklist,
+                                       record/transcribe/evaluate flow for voice challenges
+js/main.js                              boot, cross-unit wiring, responsive layout
 assets/img/                    cropped faceplate photos used by the UI
 assets/img/source/              original uploaded photos (uncropped)
 assets/manuals/                 original PDF manuals
@@ -48,3 +52,15 @@ on a phone and on a desktop: press and drag in a circle around the knob —
 the angle you sweep maps to detented steps, just like the physical
 encoder — or use a mouse wheel / trackpad scroll while hovering over it.
 See `js/knob.js`.
+
+## AI-graded voice training
+
+The Training tab's spoken-procedure tasks (MAYDAY, PAN PAN, phonetic
+alphabet, …) can be graded automatically: click "⚙ KI-Einstellungen" and
+paste a [Google Gemini API key](https://aistudio.google.com/apikey), then
+open a voice task and hit "🎙 Sprechfunk aufnehmen". The key is stored only
+in this browser's `localStorage` and is sent directly from the browser to
+Google on each recording — there is no server in between (this is a static
+site). See the warning text in that modal before using a shared/public
+device. Without a key (or without mic support), tasks fall back to manual
+self-certification.

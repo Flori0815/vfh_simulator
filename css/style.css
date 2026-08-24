@@ -52,6 +52,75 @@ html, body {
 }
 .app-header__tabs { display: none; gap: 0.4rem; }
 
+.settings-btn {
+  background: #142234;
+  color: var(--ink-dim);
+  border: 1px solid #24425c;
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.settings-btn:hover { color: var(--ink); border-color: var(--accent); }
+.settings-btn.has-key { border-color: rgba(127, 224, 160, 0.5); color: #7fe0a0; }
+
+/* --------------------------------- modal --------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 10, 16, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+.modal-backdrop[hidden] { display: none; }
+.modal {
+  background: #0e1c29;
+  border: 1px solid #24425c;
+  border-radius: 12px;
+  padding: 1.3rem 1.4rem;
+  max-width: 460px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal h2 { margin: 0 0 0.7rem; font-size: 1rem; }
+.modal__intro { font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; margin: 0 0 0.9rem; }
+.modal__intro code { color: var(--ink); }
+.modal__label { display: block; font-size: 0.75rem; color: var(--ink-dim); margin-bottom: 0.3rem; }
+.modal__input {
+  width: 100%;
+  background: #0c1926;
+  border: 1px solid #24425c;
+  border-radius: 6px;
+  color: var(--ink);
+  padding: 0.5rem 0.6rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.modal__checkbox { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--ink-dim); margin-bottom: 0.8rem; }
+.modal__advanced { margin: 0 0 0.9rem; font-size: 0.78rem; color: var(--ink-dim); }
+.modal__advanced summary { cursor: pointer; color: var(--accent); margin-bottom: 0.5rem; }
+.modal__hint { font-size: 0.7rem; color: var(--ink-dim); margin: 0.2rem 0 0; line-height: 1.4; }
+.modal__hint code { color: var(--ink); }
+.modal__warning {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #ffcf8a;
+  background: rgba(255, 179, 71, 0.08);
+  border: 1px solid rgba(255, 179, 71, 0.3);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  margin: 0 0 1rem;
+}
+.modal__actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.modal__spacer { flex: 1; }
+
 .tab-btn {
   background: #142234;
   color: var(--ink-dim);
@@ -476,6 +545,37 @@ html, body {
 .training__result.is-pending { background: #10202f; color: var(--ink-dim); font-weight: 500; }
 .training__btn--certify { display: block; margin-bottom: 0.4rem; }
 .training__hint { font-size: 0.72rem; color: var(--ink-dim); margin: 0; }
+
+/* ----------------------------- voice grading ----------------------------- */
+.training__voice { margin-bottom: 0.6rem; }
+.training__record-btn { display: block; margin-bottom: 0.5rem; }
+.training__record-btn.is-recording {
+  background: #d9455f;
+  color: #fff;
+  animation: rec-pulse 1.2s ease-in-out infinite;
+}
+@keyframes rec-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 69, 95, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(217, 69, 95, 0); }
+}
+.training__hint--live { color: var(--accent); margin-bottom: 0.5rem; }
+.training__hint--error { color: #ff8a8a; margin-bottom: 0.5rem; }
+.training__transcript {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--ink);
+  background: #0c1926;
+  border-left: 3px solid var(--accent);
+  padding: 0.5rem 0.7rem;
+  margin: 0 0 0.5rem;
+  line-height: 1.5;
+}
+.training__eval { border-radius: 8px; padding: 0.6rem 0.75rem; margin-bottom: 0.5rem; font-size: 0.82rem; }
+.training__eval p { margin: 0.3rem 0 0; line-height: 1.5; }
+.training__eval.is-pass { background: rgba(127, 224, 160, 0.15); color: #7fe0a0; }
+.training__eval.is-fail { background: rgba(217, 69, 95, 0.12); color: #ff9fae; }
+.training__eval strong { font-size: 0.88rem; }
+.training__missing { margin: 0.4rem 0 0; padding-left: 1.2rem; color: var(--ink-dim); }
 
 @media (max-width: 880px) {
   .training { grid-template-columns: 1fr; padding: 0 1rem 1.5rem; }
