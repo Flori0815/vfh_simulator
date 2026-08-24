@@ -47,14 +47,14 @@
         </div>
       </div>
 
-      <button class="ctrl ctrl--m503-16" id="m503-btn-16" type="button" aria-label="Channel 16 / distress &amp; safety">16</button>
+      <button class="ctrl ctrl--m503-16" id="m503-btn-16" type="button" aria-label="Channel 16 / distress &amp; safety" title="Tap: select Ch16 (auto 25W). Hold ~0.6s while OFF: arm Set Mode, then press POWER.">16</button>
       <button class="ctrl ctrl--m503-dual" id="m503-btn-dual" type="button" aria-label="Dualwatch / Tri-watch">DUAL</button>
-      <button class="ctrl ctrl--m503-scan" id="m503-btn-scan" type="button" aria-label="Scan / Tag channel"><span>SCAN</span><small>TAG</small></button>
-      <button class="ctrl ctrl--m503-dial" id="m503-btn-dial" type="button" aria-label="Dial / exit">DIAL</button>
-      <button class="ctrl ctrl--m503-call" id="m503-btn-call" type="button" aria-label="Call channel">CALL</button>
+      <button class="ctrl ctrl--m503-scan" id="m503-btn-scan" type="button" aria-label="Scan / Tag channel" title="Tap: start/stop scan. Hold ~1s: tag current channel."><span>SCAN</span><small>TAG</small></button>
+      <button class="ctrl ctrl--m503-dial" id="m503-btn-dial" type="button" aria-label="Dial / exit" title="Tap: exit Ch16/call channel. After latching HI/LO: tap to cycle channel group (INTL/USA/HOLLAND/ATIS/DSC).">DIAL</button>
+      <button class="ctrl ctrl--m503-call" id="m503-btn-call" type="button" aria-label="Call channel" title="Tap: select call channel. Hold ~3s: program call channel. After latching HI/LO: tap to edit channel name.">CALL</button>
       <button class="ctrl ctrl--m503-power" id="m503-btn-power" type="button" aria-label="Power">POWER</button>
-      <button class="ctrl ctrl--m503-hilo" id="m503-btn-hilo" type="button" aria-label="High / Low power, modifier key">HI/LO</button>
-      <button class="ctrl ctrl--m503-dimmer" id="m503-btn-dimmer" type="button" aria-label="Dimmer / Intercom">DIMMER</button>
+      <button class="ctrl ctrl--m503-hilo" id="m503-btn-hilo" type="button" aria-label="High / Low power, modifier key" title="Tap: toggle 25W/1W. Hold ~0.6s to LATCH it (glows blue) — release, then tap DIAL/CALL/DIMMER for their secondary function. Tap HI/LO again to cancel the latch.">HI/LO</button>
+      <button class="ctrl ctrl--m503-dimmer" id="m503-btn-dimmer" type="button" aria-label="Dimmer / Intercom" title="Tap: cycle backlight. Hold ~1s: intercom. After latching HI/LO: tap to toggle the voice scrambler.">DIMMER</button>
 
       <div class="knob knob--m503-vol" id="m503-knob-vol"><div class="knob__indicator"></div></div>
       <div class="knob knob--m503-sql" id="m503-knob-sql"><div class="knob__indicator"></div></div>
@@ -64,6 +64,18 @@
     </div>
 
     <div class="unit-status" id="m503-status" aria-live="polite"></div>
+
+    <details class="control-legend">
+      <summary>💡 Zwei-Tasten-Kombinationen (Maus-Bedienung)</summary>
+      <ul>
+        <li><strong>Kanalgruppe wechseln</strong> (INTL ⇄ USA ⇄ HOLLAND ⇄ <strong>ATIS</strong> ⇄ DSC): <strong>HI/LO</strong> ca. 0,6 s gedrückt halten, bis es blau leuchtet (Latch), dann <strong>DIAL</strong> antippen — einmal pro Schritt.</li>
+        <li><strong>Kanalname bearbeiten</strong>: HI/LO latchen (wie oben), dann <strong>CALL</strong> antippen.</li>
+        <li><strong>Scrambler ein/aus</strong>: HI/LO latchen, dann <strong>DIMMER</strong> antippen.</li>
+        <li><strong>Set Mode aufrufen</strong>: bei ausgeschaltetem Gerät <strong>16</strong> ca. 0,6 s gedrückt halten (Set Mode wird "scharf geschaltet"), dann <strong>POWER</strong> drücken.</li>
+        <li>Ein erneutes Antippen von HI/LO bzw. 16 während des Leuchtens hebt das Latch wieder auf, ohne etwas auszulösen.</li>
+      </ul>
+      <p class="control-legend__note">Am echten Gerät hält man HI/LO dabei physisch gedrückt, während man die zweite Taste drückt — mit einer Maus (ein Zeiger) unmöglich. Das Latch ersetzt das "gleichzeitig halten" durch zwei nacheinander ausgeführte Klicks.</p>
+    </details>
   </section>
 
   <!-- ============================= DS-100 ============================= -->

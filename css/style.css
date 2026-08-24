@@ -294,6 +294,26 @@ html, body {
   text-align: center;
 }
 
+.control-legend {
+  margin-top: 0.6rem;
+  border: 1px dashed #23405a;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  background: #0c1926;
+}
+.control-legend summary {
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink);
+  list-style: none;
+}
+.control-legend summary::-webkit-details-marker { display: none; }
+.control-legend ul { margin: 0.6rem 0 0.5rem; padding-left: 1.1rem; font-size: 0.73rem; color: var(--ink-dim); line-height: 1.5; }
+.control-legend li { margin-bottom: 0.35rem; }
+.control-legend li strong { color: var(--ink); }
+.control-legend__note { margin: 0; font-size: 0.68rem; color: var(--ink-dim); font-style: italic; }
+
 /* ---------------------------- debug panel ---------------------------- */
 .debug-panel {
   margin-top: 1rem;
@@ -420,6 +440,17 @@ html, body {
 .training__steps { margin: 0 0 0.8rem; padding-left: 1.3rem; font-size: 0.82rem; line-height: 1.55; color: var(--ink); }
 .training__steps li { margin-bottom: 0.15rem; }
 .training__criteria { font-size: 0.78rem; color: var(--ink-dim); margin: 0 0 1rem; }
+.training__device-hint {
+  font-size: 0.8rem;
+  color: var(--ink);
+  background: rgba(53, 194, 232, 0.1);
+  border: 1px solid rgba(53, 194, 232, 0.35);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+.training__device-hint strong { color: var(--accent); }
 .training__actions { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; }
 .training__btn {
   background: var(--accent);

@@ -127,6 +127,7 @@
         <p class="training__important"><strong>Was wichtig ist:</strong> ${escapeHtml(c.important)}</p>
         <ol class="training__steps">${stepsHtml}</ol>
         <p class="training__criteria"><strong>Erfolgskriterien:</strong> ${escapeHtml(c.criteria)}</p>
+        ${c.hint ? `<p class="training__device-hint">💡 <strong>Im Simulator:</strong> ${escapeHtml(c.hint)}</p>` : ""}
         <div class="training__actions">
           <button type="button" class="training__btn training__btn--start" id="training-start">${started ? "Neu starten" : "Aufgabe starten"}</button>
           ${started ? '<button type="button" class="training__btn" id="training-reset">Zurücksetzen</button>' : ""}

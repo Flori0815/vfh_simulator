@@ -41,6 +41,7 @@
   // means something instead of already being satisfied by defaults.
   const DEVICE = {
     1: {
+      hint: 'POWER einschalten. Falls im Display "ATIS" statt "INTL" steht: HI/LO ca. 0,6 s halten bis es blau leuchtet (Latch), loslassen, dann DIAL antippen — wiederholen bis "INTL" erscheint. Danach 16 antippen (setzt automatisch 25 W) und am SQL-Regler drehen.',
       setup(sim) {
         sim.m503.powerOff();
         sim.m503.state.group = "ATIS";
@@ -54,6 +55,7 @@
       ],
     },
     2: {
+      hint: "Mit dem großen Drehknopf einen Arbeitskanal wählen (z. B. Kanal 72), danach am SQL-Regler drehen, um die Rauschsperre neu zu justieren.",
       setup(sim) {
         sim.m503.powerOn(false);
         sim.m503.selectChannel(16);
@@ -64,6 +66,7 @@
       ],
     },
     3: {
+      hint: "Mit dem großen Drehknopf einen Arbeitskanal wählen (z. B. Kanal 69), dann HI/LO kurz antippen (kein Halten nötig), um auf 1 W (LOW) zu schalten.",
       setup(sim) {
         sim.m503.powerOn(false);
         sim.m503.selectChannel(69);
@@ -75,21 +78,25 @@
       ],
     },
     4: {
+      hint: 'DS-100: CALL antippen → mit ▼ zu "Entry Position/Time" navigieren → ENT. Breiten- und Längengrad über das Zahlenfeld eingeben, jeweils mit ENT bestätigen.',
       setup(sim) {
         sim.ds100.state.manualPosition = null;
       },
       checks: [{ label: "Position manuell eingegeben", check: (sim) => sim.ds100.state.manualPosition != null }],
     },
     5: {
+      hint: 'DS-100: CALL → "Entry Position/Time" → ENT → Position eingeben, bis zur UTC-Zeiteingabe weitergehen (ENT) und die Uhrzeit über das Zahlenfeld eingeben.',
       setup(sim) {
         sim.ds100.state.manualTime = null;
       },
       checks: [{ label: "UTC-Zeit manuell eingegeben", check: (sim) => sim.ds100.state.manualTime != null }],
     },
     7: {
+      hint: 'DS-100: CALL → ▼ bis "Set-up" → ENT → "MMSI check" → ENT.',
       checks: [{ label: "MMSI-Anzeige aufgerufen (Set-up → MMSI check)", check: (sim, t) => ds100Log(sim, t, "screen", (e) => e.id === "mmsiCheck") }],
     },
     8: {
+      hint: 'Mit dem großen Drehknopf auf einen Simplex-Kanal wechseln, z. B. 69, 72 oder 77 (im Display erscheint dann kein "DUP").',
       setup(sim) {
         sim.m503.powerOn(false);
         sim.m503.selectChannel(1); // duplex channel
@@ -102,6 +109,7 @@
       ],
     },
     9: {
+      hint: "DUAL-Taste einmal antippen, um die Mehrkanalüberwachung zu beenden.",
       setup(sim) {
         sim.m503.powerOn(false);
         sim.m503.state.dual = "dual";
@@ -112,12 +120,14 @@
       ],
     },
     10: {
+      hint: 'DS-100: CALL → ▼ bis "Received calls" → ENT → "Other message" → ENT → passenden Eintragstyp und Nachricht öffnen → A/a antippen, um sie zu löschen.',
       setup(sim) {
         seedIncoming("individual", { fromMMSI: "211998877", fromName: "Test Contact", channel: 72 });
       },
       checks: [{ label: "Nachrichtenspeicher geleert", check: (sim) => sim.ds100.state.receivedOther.length === 0 }],
     },
     31: {
+      hint: 'DS-100: CALL → ▼ bis "Received calls" → ENT → "Distress message" → ENT, um den gespeicherten Notalarm zu öffnen.',
       setup(sim) {
         seedIncoming("distress", {
           fromMMSI: "244555666",
@@ -129,6 +139,7 @@
       checks: [{ label: "Notalarm-Speicher (Received calls → Distress) geöffnet", check: (sim, t) => ds100Log(sim, t, "screen", (e) => e.id === "receivedDetail") }],
     },
     56: {
+      hint: "DS-100: DISTRESS-Abdeckung anheben, Taste 5 s halten (sendet den Alarm), danach CLR antippen, um ihn zu stornieren.",
       checks: [
         {
           label: "Notalarm gesendet und danach am Gerät storniert",
@@ -142,6 +153,7 @@
       ],
     },
     61: {
+      hint: "DISTRESS-Taste antippen und vor Ablauf der Haltezeit wieder loslassen. Hinweis: In diesem Simulator (Icom DS-100-Vorbild) sind es 5 s Haltezeit; der Prüfungskatalog nennt 3 s als allgemeine Mindesthaltezeit für DSC-Geräte.",
       checks: [
         {
           label: "DISTRESS-Taste vor Ablauf losgelassen, kein Alarm gesendet",
@@ -155,15 +167,19 @@
       ],
     },
     66: {
+      hint: 'DS-100: CALL → ▼ bis "All ships call" → ENT → "Urgency" wählen → ENT → Kanal bestätigen mit ENT.',
       checks: [{ label: "DSC-Anruf ALL SHIPS mit Priorität URGENCY gesendet", check: (sim, t) => ds100Log(sim, t, "call_tx", (e) => e.kind === "all_ships" && e.category === "urgency") }],
     },
     69: {
+      hint: 'DS-100: CALL → "Individual call" → ENT → "Manual entry" → MMSI der Küstenfunkstelle mit führenden Nullen eingeben (z. B. 002111200) → ENT → Kanal bestätigen mit ENT.',
       checks: [{ label: "Einzelanruf an eine Küstenfunkstelle (MMSI 00…) gesendet", check: (sim, t) => ds100Log(sim, t, "call_tx", (e) => e.kind === "individual" && String(e.toMMSI).startsWith("00")) }],
     },
     81: {
+      hint: 'DS-100: CALL → ▼ bis "All ships call" → ENT → "Safety" wählen → ENT → Kanal bestätigen mit ENT.',
       checks: [{ label: "DSC-Anruf ALL SHIPS mit Priorität SAFETY gesendet", check: (sim, t) => ds100Log(sim, t, "call_tx", (e) => e.kind === "all_ships" && e.category === "safety") }],
     },
     93: {
+      hint: 'DS-100: "Individual call" → Adressbucheintrag oder "Manual entry" wählen → auf der Kanalseite BS zweimal antippen (löscht die "16") und 69, 72 oder 77 eingeben → ENT.',
       checks: [
         {
           label: "Einzelanruf mit gültigem Simplex-Arbeitskanal (69/72/77) gesendet",
@@ -172,9 +188,11 @@
       ],
     },
     96: {
+      hint: 'DS-100: "Individual call" → "Manual entry" → MMSI der Küstenfunkstelle mit führenden Nullen eingeben (z. B. 002111200) → ENT.',
       checks: [{ label: "Einzelanruf an eine Küstenfunkstelle (MMSI 00…) gesendet", check: (sim, t) => ds100Log(sim, t, "call_tx", (e) => e.kind === "individual" && String(e.toMMSI).startsWith("00")) }],
     },
     98: {
+      hint: "16-Taste auf dem IC-M503 kurz antippen (kein Halten nötig).",
       setup(sim) {
         sim.m503.powerOn(false);
         sim.m503.selectChannel(72);
@@ -182,9 +200,11 @@
       checks: [{ label: "Schnellwahltaste 16 gedrückt", check: (sim, t) => m503Log(sim, t, "ch16_select") }],
     },
     99: {
+      hint: 'DS-100: CALL → ▼ bis "Set-up" → ENT → ▼ bis "DSC self-test" → ENT.',
       checks: [{ label: "DSC-Selbsttest ausgeführt (Set-up → DSC self-test)", check: (sim, t) => ds100Log(sim, t, "dsc_self_test") }],
     },
     104: {
+      hint: "Mit dem großen Drehknopf Kanal 11 wählen, dann HI/LO kurz antippen, um auf 1 W zu schalten.",
       setup(sim) {
         sim.m503.powerOn(false);
         sim.m503.selectChannel(16);
@@ -196,6 +216,7 @@
       ],
     },
     105: {
+      hint: "16-Taste antippen (setzt automatisch Kanal 16 und 25 W). Lautstärke/Squelch bei Bedarf nachjustieren; Kanalgruppe sollte INTL (nicht ATIS) sein.",
       setup(sim) {
         sim.m503.powerOn(false);
         sim.m503.selectChannel(72);
@@ -215,10 +236,20 @@
     11: "undesignated", 12: "fire", 13: "flooding", 14: "collision", 15: "grounding",
     16: "capsizing", 17: "sinking", 18: "man_overboard", 19: "adrift", 20: "abandoning",
   };
+  const NATURE_LABELS = {
+    undesignated: "Undesignated", fire: "Fire, Explosion", flooding: "Flooding", collision: "Collision",
+    grounding: "Grounding", capsizing: "Capsizing", sinking: "Sinking", man_overboard: "Man overboard",
+    adrift: "Disabled and adrift", abandoning: "Abandoning ship",
+  };
   Object.keys(NATURE_BY_QUESTION).forEach((numStr) => {
     const num = Number(numStr);
     const nature = NATURE_BY_QUESTION[numStr];
+    const natureLabel = NATURE_LABELS[nature];
     DEVICE[num] = {
+      hint:
+        nature === "undesignated"
+          ? "DS-100: DISTRESS-Abdeckung anheben, Taste 5 s halten — ohne vorherige Notgrundauswahl wird automatisch „Undesignated“ gesendet."
+          : `DS-100: CALL → ▼ bis "Distress setting" → ENT → "${natureLabel}" wählen → ENT. Danach DISTRESS-Abdeckung anheben und die Taste 5 s halten.`,
       checks: [
         {
           label: `DSC-Notalarm mit Notgrund "${nature}" auf Kanal 70 gesendet`,
@@ -239,6 +270,7 @@
       type: device ? "device" : "voice",
       setup: device && device.setup ? device.setup : null,
       checks: device ? device.checks : null,
+      hint: device && device.hint ? device.hint : null,
     });
   });
 
