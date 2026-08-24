@@ -1,0 +1,840 @@
+Comprehensive Prüfungs- und Validierungssystematik für SRC-Seefunksimulatoren: Anforderungs- und Testfallkatalog
+Regulatorischer Rahmen und methodische Grundlagen der praktischen SRC-Prüfung
+Die praktische Prüfung zum Erwerb des Beschränkt Gültigen Funkbetriebszeugnisses (Short Range Certificate – SRC) basiert in der Bundesrepublik Deutschland auf den amtlichen Durchführungsrichtlinien des Bundesministeriums für Digitales und Verkehr (BMDV), die durch die Prüfungsausschüsse des Deutschen Segler-Verbands (DSV) und des Deutschen Motoryachtverbandes (DMYV) umgesetzt werden. Das SRC stellt die amtliche Berechtigung dar, am mobilen Seefunkdienst auf Ultrakurzwelle (UKW) im Weltweiten Seenot- und Sicherheitsfunksystem (GMDSS) für Sportboote teilzunehmen.
+Die praktische Prüfung bewertet sowohl das technische Verständnis der UKW-DSC-Funkanlage als auch die exakte Einhaltung der internationalen Funkbetriebsverfahren gemäß den Radio Regulations (VO Funk) sowie den einschlägigen ITU-R-Empfehlungen. Die Prüfung gliedert sich strukturell in Pflichtaufgaben sowie sonstige Fertigkeiten, wobei Prüflinge maximal zwei Versuche pro Teilaufgabe haben, um die geforderte Bediengenauigkeit und Formeltreue im Sprechfunk nachzuweisen.
+| Prüfungssegment | Anzahl geforderter Aufgaben | Maximale Lösungsversuche pro Aufgabe | Tolerierte Fehlerquote / Bewertungskriterium |
+|---|---|---|---|
+| Pflichtaufgaben | Max. 4 Aufgaben aus dem Aufgabenpool | 2 Versuche | 100 % korrekte Abwicklung im 1. oder 2. Versuch. Formfehler im Prozedurablauf führen zum Fehlversuch. |
+| Sonstige Fertigkeiten | Max. 3 Aufgaben aus dem Aufgabenpool | 2 Versuche | Mindestens 2 von 3 Aufgaben müssen fehlerfrei gelöst werden. |
+| Betriebsbereitschaft / Setup | In jedem Prüfungsszenario integriert | Unmittelbare Korrektur erforderlich | Fehleinstellungen (z. B. aktiver ATIS-Modus statt GMDSS) führen zum Nichtbestehen der Teilaufgabe. |
+Jedem Prüfungsgespräch geht eine grundlegende Herbeiführung der Betriebsbereitschaft voraus. Ein vollwertiges Simulatorsystem muss daher nicht nur die rein alphanumerische Eingabe im DSC-Controller auswerten, sondern auch analoge Betriebsparameter wie Lautstärke, Rauschsperre (Squelch), Sendeleistung (High/Low Power) und die operative Kanalwahl dynamisch nachhalten.
+Technische Systemanforderung an die Simulator-Emulation
+Damit ein Software-Simulator die praktische SRC-Prüfung realistisch und prüfungskonform abbilden kann, müssen wesentliche Gerätezustände und Simulationsvariablen im Emulationskern verarbeitet werden.
+ * Betriebsmodus: Das System muss die Umschaltung zwischen Seefunk (GMDSS/DSC) und Binnenfunk (ATIS) unterstützen. Im Rahmen der SRC-Prüfungsabnahme darf ausschließlich der Seefunk-Modus aktiv sein.
+ * Empfänger-Kalibrierung: Eine physikalisch korrekte Abbildung der Rauschsperre (Squelch) ist zwingend. Der Schwellenwert muss so eingestellt werden, dass das Empfänger-Grundrauschen stummgeschaltet wird, eingehende Nutzsignale auf Kanal 16 oder den relevanten Arbeitskanälen jedoch ungestört durchgestellt werden.
+ * Manuelle Dateneingabe: Da im Prüfungsaufbau gewöhnlich kein externes GPS-Empfangsgerät angeschlossen ist, müssen Breitengrad, Längengrad und die aktuelle UTC-Zeit manuell über die Bedienschnittstelle korrigiert werden können.
+ * Leistungswahl: Die Ausstrahlung von Not-, Dringlichkeits- und Sicherheitsmeldungen muss mit hoher Sendeleistung (25\text{ W}) erfolgen. Der Routinefunkverkehr in Hafennähe oder auf kurze Distanz erfordert hingegen die Selektion der niedrigen Sendeleistung (1\text{ W}).
+Exhaustiver Prüfungsfragen- und Aufgabenkatalog (105 Testfälle)
+Der nachfolgende Katalog umfasst 105 differenzierte Prüfungsaufgaben, aufgeteilt auf die wesentlichen Funktions- und Einsatzbereiche des UKW-GMDSS-Seefunks. Für eine vollständige Emulation muss das Simulatorsystem jede dieser Aufgaben hinsichtlich Eingabesequenz, Funktextinhalten und Geräteparametern automatisiert auswerten können.
+Kategorie 1: Geräteinbetriebnahme, System-Setup & Grundeinstellungen
+Frage 1: Herstellen der grundlegenden Betriebsbereitschaft im Seefunkmodus
+ * Was wichtig ist: Das Gerät muss aus dem Ausschaltzustand in den betriebsbereiten Seefunkmodus versetzt werden.
+ * Reihenfolge der Abarbeitung:
+   * Hauptschalter oder EIN/AUS-Drehknopf betätigen.
+   * Modus am Gerät überprüfen; falls ATIS aktiv ist, auf Seefunk/GMDSS umschalten.
+   * Anruf- und Notkanal 16 anwählen.
+   * High Power (25\text{ W}) auf dem Display verifizieren.
+   * Lautstärke auf mittlere Hörstärke einstellen.
+   * Rauschsperre (Squelch) öffnen, bis Rauschen ertönt, danach knapp bis zum Verstummen eindrehen.
+ * Erfolgskriterien: Modus Seefunk aktiv, Kanal 16 eingestellt, SQL an der Rauschgrenze, Sendeleistung 25\text{ W} im Display.
+Frage 2: Kalibrierung der Rauschsperre (Squelch) bei Kanalwechsel
+ * Was wichtig ist: Das Signal darf bei Kanalwechsel nicht durch einen zu hoch eingestellten Squelch unterdrückt werden.
+ * Reihenfolge der Abarbeitung:
+   * Kanalwechsel von Kanal 16 auf einen Arbeitskanal (z. B. Kanal 72) durchführen.
+   * Squelch-Regler vollständig öffnen, bis Dauerrauschen hörbar ist.
+   * Lautstärke auf Angenehmheitswert regulieren.
+   * Squelch-Regler langsam schließen, bis das Rauschen exakt erlischt.
+ * Erfolgskriterien: Rauschsperre ist präzise an der Wahrnehmungsgrenze des gewählten Arbeitskanals kalibriert.
+#### Frage 3: Umstellung der Sendeleistung für Nahbereichs-Routineverkehr
+ * Was wichtig ist: Verhindern von Weitreichenstörungen durch Herabsetzung der Sendeleistung im Nahbereich.
+ * Reihenfolge der Abarbeitung:
+   * Einstellung auf Arbeitskanal (z. B. Kanal 69) prüfen.
+   * Taste HI/LO beziehungsweise 1/25 W betätigen.
+   * Anzeige im Display auf 1 W beziehungsweise LOW kontrollieren.
+ * Erfolgskriterien: Umschaltung auf 1\text{ W} Sendeleistung erfolgreich im Display visualisiert.
+Frage 4: Manuelle Eingabe der Schiffsposition im DSC-Controller
+ * Was wichtig ist: Korrektur der Geokoordinaten bei fehlender automatischer GNSS-Einspeisung.
+ * Reihenfolge der Abarbeitung:
+   * Menüaufruf MENU \rightarrow DSC SETUP oder POS/TIME.
+   * Eingabemaske für Breitengrad (Latitude) wählen.
+   * Geokoordinaten (z. B. 54^\circ 10'\text{ N}) eingeben.
+   * Eingabemaske für Längengrad (Longitude) wählen.
+   * Geokoordinaten (z. B. 011^\circ 55'\text{ E}) eingeben.
+   * Eingabe speichern (ENTER / SAVE).
+ * Erfolgskriterien: Exakte Übereinstimmung der im Display visualisierten Koordinaten mit den Prüfungs-Vorgabedaten.
+Frage 5: Manuelle Aktualisierung der UTC-Uhrzeit im DSC-Controller
+ * Was wichtig ist: Zeitstempelgenaue Aussendung von DSC-Alarmen nach Weltzeit (UTC).
+ * Reihenfolge der Abarbeitung:
+   * Menüpunkt POS/TIME INJECTION anwählen.
+   * Untermenü UTC TIME aufrufen.
+   * Vorgegebene vierstellige UTC-Zeit (z. B. 1425) eingeben.
+   * Eingabe bestätigen und Menü verlassen.
+ * *Erfolgskriterien*: Die eingegebene UTC-Zeit wird im Hauptbildschirm korrekt geführt.
+Frage 6: Überprüfung des DSC-Wachempfängers auf Kanal 70
+ * Was wichtig ist: Der intern eingebaute DSC-Wachempfänger muss kontinuierlich auf Kanal 70 lauschen.
+ * Reihenfolge der Abarbeitung:
+   * Statusanzeige des Dual-Watch- bzw. GMDSS-Empfängers im Display prüfen.
+   * Verifizieren, dass Kanal 70 nicht durch manuelle Einstellungen blockiert ist.
+ * Erfolgskriterien: Nachweis der aktiven Kanal-70-Bereitschaft im Gerätedisplay.
+Frage 7: Systemabfrage der eigenen MMSI und des Rufzeichens
+ * Was wichtig ist: Identifikation der eigenen Funkstellenkennung vor Betriebsaufnahme.
+ * Reihenfolge der Abarbeitung:
+   * Menü RADIO INFO / MMSI SHOW ansteuern.
+   * Neunstellige MMSI ablesen und mit Schiffspapieren abgleichen.
+   * Rufzeichen (Call Sign) verifizieren.
+ * Erfolgskriterien: Korrekte Anzeige der hinterlegten MMSI im System.
+Frage 8: Auswahllogik Simplex- vs. Duplex-Kanäle
+ * Was wichtig ist: Verständnis, dass Schiff-zu-Schiff-Kommunikation auf Duplex-Kanälen technisch unmöglich ist.
+ * Reihenfolge der Abarbeitung:
+   * Geforderten Arbeitskanal am Kanalwahlknopf wählen.
+   * Im Display prüfen, ob DUPLEX oder SIMPLEX angezeigt wird.
+   * Bei Schiff-zu-Schiff-Aufgaben auf einen Simplex-Kanal (z. B. 69, 72, 77) ausweichen.
+ * Erfolgskriterien: Richtige Kanalauswahl basierend auf der angesteuerten Gegenstelle.
+Frage 9: Prüfen und Deaktivieren der Dual-Watch-Funktion
+ * Was wichtig ist: Vermeidung von ungewollten Kanalwechseln durch die Zwei-Kanal-Überwachung während einer Prüfungsaufgabe.
+ * Reihenfolge der Abarbeitung:
+   * Taste DW oder TRI betätigen, um den Mehrkanalbetrieb zu beenden.
+   * Verifizieren, dass der Transceiver starr auf dem Arbeitskanal oder Kanal 16 steht.
+ * Erfolgskriterien: Reiner Einkanalbetrieb auf dem geforderten Zielkanal etabliert.
+Frage 10: Zurücksetzen von vorangegangenen Alarmen im Speicher
+ * Was wichtig ist: Bereinigung des Systemzustands vor Beginn einer neuen Prüfungsaufgabe.
+ * Reihenfolge der Abarbeitung:
+   * Menü CALL LOG oder UNREAD MESSAGES aufrufen.
+   * Vorhandene Nachrichten quittieren und löschen (CLEAR / DELETE).
+   * Display in die Grundstellung (Kanal 16, Notbereitschaft) bringen.
+ * Erfolgskriterien: Controller zeigt keinen ungelesenen Speicherinhalt mehr an.
+Kategorie 2: Notverkehr – DSC-Notalarm und Sprechfunk-Notmeldung
+Frage 11: Aussenden eines unbestimmten Notalarms (Undesignated Distress Alert)
+ * Was wichtig ist: Unmittelbare Auslösung des Notalarms bei extremer Zeitnot ohne Notgrundauswahl.
+ * Reihenfolge der Abarbeitung:
+   * Abdeckung der DISTRESS-Taste anheben.
+   * DISTRESS-Taste ununterbrochen für mindestens 3 Sekunden gedrückt halten (optischer/akustischer Countdown).
+   * Übertragung des Alarms im Display abwarten (DISTRESS ALERT SENT).
+   * Automatischen Wechsel des Geräts auf Kanal 16 kontrollieren.
+ * Erfolgskriterien: Haltezeit eingehalten, Notalarm auf Kanal 70 gesendet, Transceiver schaltet selbsttätig empfangsbereit auf Kanal 16.
+Frage 12: Editieren und Senden eines Notalarms – Grund: Feuer/Explosion (Fire/Explosion)
+ * Was wichtig ist: Exakte Notgrundauswahl im DSC-Menü vor Auslösung.
+ * Reihenfolge der Abarbeitung:
+    1. MENU \rightarrow DSC CALL \rightarrow DISTRESS MSG aufrufen.
+   2. Notgrund FIRE, EXPLOSION selektieren.
+   3. Gegebenenfalls Position und UTC-Zeit korrigieren.
+   4. DISTRESS-Taste 3 Sekunden gedrückt halten.
+   5. Nach Ausstrahlung Wechsel auf Kanal 16 verifizieren.
+ * Erfolgskriterien: DSC-Notalarm enthält das Attribut FIRE, EXPLOSION sowie gültige Position und Zeitstempel.
+Frage 13: Editieren und Senden eines Notalarms – Grund: Wassereinbruch (Flooding)
+ * Was wichtig ist: Programmierung der Alarmmeldung bei Wassereinbruch.
+ * Reihenfolge der Abarbeitung:
+   * Menü DISTRESS MSG öffnen.
+   * Notgrund FLOODING wählen.
+   * DISTRESS-Taste für 3 Sekunden auslösen.
+ * Erfolgskriterien: Notalarm mit Attribut FLOODING korrekt auf Kanal 70 übertragen.
+Frage 14: Editieren und Senden eines Notalarms – Grund: Kollision (Collision)
+ * Was wichtig ist: Standardisierte DSC-Editierung bei Schiffskollision.
+ * Reihenfolge der Abarbeitung:
+   * Notfallmenü anwählen.
+         2. Notgrund COLLISION selektieren.
+   * Dreisekündige Auslösung über die DISTRESS-Taste durchführen.
+ * Erfolgskriterien: Notgrund COLLISION im gesendeten DSC-Datenpaket enthalten.
+Frage 15: Editieren und Senden eines Notalarms – Grund: Grundberührung (Grounding)
+ * Was wichtig ist: Alarmierung bei Festkommen auf Fels oder Sandbank.
+ * Reihenfolge der Abarbeitung:
+   * Notfallmenü im Controller öffnen.
+   * Option GROUNDING wählen.
+     3. DISTRESS-Taste 3 Sekunden betätigen.
+ * Erfolgskriterien: Übertragung mit Parameter GROUNDING abgeschlossen.
+Frage 16: Editieren und Senden eines Notalarms – Grund: Kentern / Schlagseite (Listing/Capsizing)
+ * Was wichtig ist: Schnelle Menüauswahl bei drohender Kenterung.
+ * Reihenfolge der Abarbeitung:
+   * Notfallmenü im Controller öffnen.
+   * Option LISTING, CAPSIZING markieren.
+   * DISTRESS-Taste 3 Sekunden halten.
+ * Erfolgskriterien: Notalarm mit Attribut LISTING, CAPSIZING gesendet.
+Frage 17: Editieren und Senden eines Notalarms – Grund: Sinken (Sinking)
+ * Was wichtig ist: Voreinstellung bei unmittelbar drohendem Untergang.
+ * Reihenfolge der Abarbeitung:
+   * Menü DISTRESS CALL ansteuern.
+   * Notgrund SINKING wählen.
+   * DISTRESS-Taste 3 Sekunden gedrückt halten.
+ * Erfolgskriterien: Aussendung des Alarms mit Attribut SINKING im Display bestätigt.
+Frage 18: Editieren und Senden eines Notalarms – Grund: Man Overboard (MOB)
+ * Was wichtig ist: Auslösung bei Person über Bord.
+ * Reihenfolge der Abarbeitung:
+   * Notfallmenü öffnen.
+   * Notgrund PERS[span_91](start_span)[span_91](end_span)ON OVERBOARD / MAN OVERBOARD wählen.
+   * DIST[span_92](start_span)[span_92](end_span)RESS-Taste 3 Sekunden lang betätigen.
+ * Erfolgskriterien: Notalarm mit Attribut MAN OVERBOARD gesendet.
+Frage 19: Editieren und Senden eines Notalarms – Grund: Treiben / Manövrierunfähigkeit (Disabled and Adrift)
+ * Was wichtig ist: Notfallkennzeichnung bei Manövrierunfähigkeit in gefahrenträchtiger Lage.
+ * Reihenfolge der Abarbeitung:
+   * Notfallmenü aufrufen.
+   * Notgrund DISABLED AND ADRIFT selektieren.
+   * DISTRESS-Taste 3 Sekunden drücken.
+ * Erfolgskriterien: DSC-Frame mit DISABLED AND ADRIFT übertragen.
+Frage 20: Editieren und Senden eines Notalarms – Grund: Schiff verlassen (Abandoning Vessel)
+ * Was wichtig ist: Alarmierung unmittelbar vor dem Übersteigen in Rettungsmittel.
+ * Reihenfolge der Abarbeitung:
+   * Menü DISTRESS MSG wählen.
+   * Notgrund UNDESIGNATED oder ABANDONING S[span_97](start_span)[span_97](end_span)HIP markieren.
+   * DISTRESS-Taste 3 Sekunden gedrückt halten.
+ * Erfolgskriterien: Notalarm vor Verlassen des Schiffs abgesendet.
+Frage 21: Sprechfunk-Notmeldung nach Notalarm (Szenario: Feuer im Motorraum)
+ * Was wichtig ist: Exakte Strukturierung der Notmeldung auf Kanal 16 im Sprechfunkverfahren.
+ * Reihenfolge der Abarbeitung:
+   * Nach dem DSC-Notalarm Verbleib auf Kanal 16 verifizieren.
+   * Sendetaste (PTT) am Mikrofon drücken und halten.
+   * Notanruf sprechen: MAYDAY (1x).
+   * Schiffsname (3x), THIS IS (1x), Schiffsname (1x), Rufzeichen (1x), MMSI (1x).
+   * Notmeldung abgeben:
+     * MAYDAY (1x)
+     * Schiffsname (1x), Rufzeichen (1x)
+     * Position: IN P[span_247](start_span)[span_247](end_span)OSITION 54 DEGREES 12 MINUTES NORTH, 011 DEGREES 50 MINUTES EAST
+     * Notfallart & Hilfeleistung: FIRE IN ENGINE ROOM, REQUIRE IMMEDIATE ASSISTANCE
+     * Ergänzende Angaben: 4 PERSONS ON BOA[span_103](start_span)[span_103](end_span)RD, PREPARING LIFERAFT
+     * Sprechaufforderung: OVER
+   * PTT-Taste loslassen.
+ * Erfolgskriterien: Lückenlose, phonetisch korrekte Abgabe der Notmeldung ohne Notizen, Abschluss mit OVER.
+Frage 22: Sprechfunk-Notmeldung nach Notalarm (Szenario: Wassereinbruch im Maschinenraum)
+ * Was wichtig ist: Präzise Übermittlung der Notlage Wassereinbruch.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 verifizieren.
+   * PTT drücken.
+   * Notanruf: MAYDAY - Schiffsname (3x) - THIS IS - Schiffsname (1x) - Rufzeichen (1x) - MMSI (1x).
+   * Notmeldung: MAYDAY - Schiffsname - IN POSITION... - UNCONTROLLED FLOODING IN ENGINE ROOM, REQUIRE IMMEDIATE ASSISTANCE - 3 PERSONS ON BOARD - OVER.
+   * PTT loslassen.
+ * Erfolgskriterien: Phonetisch einwandfreie Aussprache aller Kerndaten, Stopp nach [span_108](start_span)[span_108](end_span)OVER.
+Frage 23: Sprechfunk-Notmeldung nach Notalarm (Szenario: Kollision mit Frachtschiff)
+ * Was wichtig ist: Übermittlung des Havariegrundes Collision.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 verifizieren.
+     2. PTT betätigen.
+   * Notanruf & Notmeldung: MAYDAY ... COLLISION WITH CARGO VESSEL, TAKING WATER, REQUIRE IMMEDIATE ASSISTANCE ... 5 PERSONS ON BOARD - OVER.
+ * Erfolgskriterien: Vollständige Einhaltung des internationalen Funkschemas.
+Frage 24: Sprechfunk-Notmeldung nach Notalarm (Szenario: Grundberührung mit Wassereinbruch)
+ * Was wichtig ist: Kombination aus Grundberührung und Leckage übermitteln.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 verifizieren.
+   * PTT drücken.
+   * MAYDAY ... GROUNDED ON ROCK, HEAVY LEAKAGE, REQUIRE IMMEDIATE ASSISTANCE ... OVER.
+ * Erfolgskriterien: Exakte Angaben zu Position und Hilfebedarf.
+Frage 25: Sprechfunk-Notmeldung nach Notalarm (Szenario: Mensch über Bord bei Nacht)
+ * Was wichtig ist: MOB-Notfallmeldung zur Auslösung von Seenotrettungsmaßnahmen.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 kontrollieren.
+   * PTT betätigen.
+   * MAYDAY ... PERSON OVERBOARD IN POSITION[span_112](start_span)[span_112](end_span) ... AT 2200 UTC, REQUIRE IMMEDIATE ASSISTANCE ... OVER.
+ * Erfolgskriterien: Zeitstempel und Position des Vorfalls im Sprechfunk übermittelt.
+Frage 26: Sprechfunk-Notmeldung nach Notalarm (Szenario: Treiben auf Untiefe in rauer See)
+ * Was wichtig ist: Schilderung der Gefährdung durch Abtrift.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 verifizieren.
+   * PTT drücken.
+   * MAYDAY ... ENGINE FAILURE, DRIFTING IN ROU[span_114](start_span)[span_114](end_span)GH SEA TOWARDS SHALLOW WATER, REQUIRE IMMEDIATE ASSISTANCE ... OVE[span_115](start_span)[span_115](end_span)R.
+ * Erfolgskriterien: Gefahrenlage im Sprechfunk präzise dargestellt.
+Frage 27: Sprechfunk-Notmeldung ohne vorherigen DSC-Notalarm
+ * Was wichtig ist: Abgabe der Notmeldung rein per Sprechfunk bei defektem DSC-Controller.
+ * Reihenfolge der Abarbeitung:
+   * Transceiver direkt auf Kanal 16 einstellen.
+   * Sendeleistung 25\text{ W} kontrollieren.
+   * Notanruf und Notmeldung unmittelbar per Sprechfunk ausgeben.
+ * Erfolgskriterien: Beginn mit MAYDAY ohne vorangegangene DSC-Aktivierung.
+Frage 28: Sprechfunk-Notmeldung bei relativer Positionsangabe
+ * Was wichtig ist: Formulierung einer relativen Positionsbeschreibung zu einem Peilobjekt, falls keine Koordinaten vorliegen.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken.
+   * Notmeldung sprechen: POSITION 5 NAUTICAL MILES SOUTH OF CAPE ARKONA.
+ * Erfolgskriterien: Peilung, Distanz und Bezugspunkt regelkonform genannt.
+Frage 29: Wiederholung einer Notmeldung bei Ausbleiben von Empfangsbestätigungen
+ * Was wichtig ist: Taktische Wiederholung der Notmeldung nach Verstreichen einer Wartefrist.
+ * Reihenfolge der Abarbeitung:
+   * Auf Kanal 16 für 3 bis 4 Minuten nach dem ersten Notruf lauschen.
+        2. Bei Ausbleiben einer Antwort Notmeldung auf Kanal 16 identisch wiederholen.
+ * Erfolgskriterien: Fristgerechte Wiederholung der vollständigen Notmeldung.
+Frage 30: Sprechfunk-Notmeldung mit detaillierter Verletzten- und Personenanzahl
+ * Was wichtig ist: Präzisierung der Personenstärke an Bord für Seenotrettungseinheiten.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 einstellen.
+   * PTT drücken.
+   * Notmeldung sprechen: ... 6 PERSONS ON BOARD, TWO PERSONS SEVERE BURNS, REQUIRE IMMEDIATE MEDICAL AND RESCUE ASSISTANCE - OVER.
+ * Erfolgskriterien: Medizinische Notlage korrekt in die Notmeldung integriert.
+Kategorie 3: Notverkehr – Empfang, Bestätigung, Hilfeleistung & Distress Relay
+Frage 31: Speicherabfrage eines empfangenen DSC-Notalarms
+ * Was wichtig ist: Auslesen und Notieren der Notrufdaten aus dem DSC-Empfangsspeicher.
+ * Reihenfolge der Abarbeitung:
+   * DSC-Alarmton am Gerät quittieren (SILENCE / CLEAR).
+   * Menü DSC LOG \rightarrow RECEIVED CALLS \rightarrow DISTRESS LOG aufrufen.
+   * Relevante Daten auslesen: MMSI des Havaristen, Notgrund, Geokoordinaten, UTC-Zeitstempel.
+ * Erfolgskriterien: Auslesen der Vierer-Datengruppe (MMSI, Grund, Position, Zeit) aus dem Speicher.
+Frage 32: Validierung des DSC-Bestätigungsverbots für Seefunkstellen
+ * Was wichtig ist: Das strikte Verbot für Schiffsfunkstellen beachten, einen DSC-Notalarm per DSC zu bestätigen.
+ * Reihenfolge der Abarbeitung:
+    1. Empfang des DSC-Notalarms am Gerät feststellen.
+   2. Keinesfalls eine DSC-Acknowledge-Funktion betätigen.
+   3. Auf Kanal 16 umschalten und Sprechfunk der Küstenfunkstelle abwarten.
+ * Erfolgskriterien: Keine manuelle Auslösung einer DSC-Empfangsbestätigung durch den Bediener.
+Frage 33: Sprechfunk-Empfangsbestätigung eines Notalarms auf Kanal 16
+ * Was wichtig ist: Bestätigung einer Notmeldung per Sprechfunk auf Kanal 16, wenn keine Küstenfunkstelle antwortet und das eigene Schiff Hilfe leisten kann.
+ * Reihenfolge der Abarbeitung:
+   * Warten, ob eine Küstenfunkstelle auf Kanal 16 antwortet.
+   * Falls keine Antwort erfolgt: PTT drücken.
+   * Bestätigungsanruf tätigen:
+       * MAYDAY
+     * Schiffsname/Rufzeichen/MMSI des Havaristen (3x)
+     * THIS IS
+     * Eigener Schiffsname (3x), Rufzeichen (1x)
+     * RECEIVED MAYDAY
+     * OVER
+ * Erfolgskriterien: Korrekte Anwendung des Schlüsselbegriffs RECEIVED MAYDAY im Sprechfunk.
+Frage 34: Hilfeleistungsangebot mit Positions- und Ankunftszeitangabe (ETA)
+ * Was wichtig ist: Übermittlung der eigenen Anfahrtsdaten an den Havaristen im Notverkehr.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 verifizieren.
+   * PTT drücken.
+   * Sprechfunkmeldung abgeben:
+     * MAYDAY - Schiffsname Havarist - THIS IS - Eigener Schiffsname / Rufzeichen
+     * RECEIVED MAYDAY
+     * MY POSITION IS ...
+     * PROCEEDING AT 10 KNOTS TO YOUR POSITION, ETA 1430 UTC
+     * OVER
+ * Erfolgskriterien: Positions- und ETA-Angabe regelkonform im Sprechfunk übermittelt.
+Frage 35: Empfangsbestätigung bei unmittelbarer Nähe zum Havaristen
+ * Was wichtig ist: Sofortige Bestätigung per Sprechfunk bei Sichtkontakt zum Havaristen.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken.
+   * MAYDAY - Name Havarist - THIS IS - Eigener Name - RECEIVED MAYDAY, I AM IN SIGHT OF YOU, STANDING BY TO TAKE OFF SURVIVORS - OVER.
+ * Erfolgskriterien: Unverzügliche Sprechfunkbestätigung bei Sichtkontakt durchgeführt.
+Frage 36: Weiterleitung eines Notalarms (Mayday Relay) an eine Küstenfunkstelle
+ * Was wichtig ist: Not-Weiterleitung per Sprechfunk an ein MRCC, wenn ein Havarist seinen Notruf nicht selbst aussenden kann.
+   *   Reihenfolge der Abarbeitung:
+   * Kanal 16 einstellen.
+   * PTT drücken.
+   * Anruf: MAYDAY RELAY (3x).
+       4. Adressat: BREMEN RESCUE (3x) oder ALL STATIONS (3x).
+   * Absender: THIS IS - Eigener Schiffsname (3x), Rufzeichen (1x), MMSI (1x).
+   * Text: MAYDAY - Schiffsname Havarist / Rufzeichen - Position Havarist - Notlage - OVER.
+ * Erfolgskriterien: Dreifache Verwendung von MAYDAY RELAY, fehlerfreie Wiedergabe der fremden Notfalldaten.
+#### Frage 37: Mayday Relay an ALL STATIONS nach Sichten eines gekenterten Rettungsfloßes
+ * Was wichtig ist: Weiterleitung einer Notbeobachtung ohne direkten Funkkontakt zum Havaristen.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 verifizieren.
+   * PTT betätigen.
+   * MAYDAY RELAY (3x) - [span_261](start_span)[span_261](end_span)ALL STATIONS (3x) - THIS IS - Eigener Name (3x) / Rufzeichen.
+   * IN POSITION NEAR LIGHT BUOY HUMBER 5 CAPSIZED LIFERAFT OBSERVED, NO SURVIVORS SIGHTED, SHIPS IN AREA KEPT TO LOOKOUT - OVER.
+ * Erfolgskriterien: Phonetisch einwandfreie Wiedergabe der amtlichen Seefunktext-Inhalte.
+Frage 38: Mayday Relay per Sprechfunk nach ungeklärter DSC-Notmeldung eines Dritten
+ * Was wichtig ist: Weiterleiten eines empfangenen DSC-Notalarms per Sprechfunk, wenn dieser von keiner Küstenfunkstelle bestätigt wurde.
+ * Reihenfolge der Abarbeitung:
+   * DSC-Speicher aufrufen und Daten des fremden Notalarms notieren.
+   * Auf Kanal 16 umschalten.
+   * PTT drücken: [span_262](start_span)[span_262](end_span)MAYDAY RELAY (3x) - ALL STATIONS (3x) - THIS IS - Eigener Name (3x).
+   * Text der gelesenen Notmeldung übermitteln (MMSI des fremden Schiffs, Position, Zeit).
+   * Mit OVER abschließen.
+ * Erfolgskriterien: Fehlerfreie Übertragung der aus dem DSC-Log ausgelesenen Kennungen.
+Frage 39: Übernahme der Notverkehrs-Koordination bei Schweigen der Küstenfunkstelle
+ * Was wichtig ist: Führung des Notverkehrs durch das erste helfende Schiff vor Ort.
+ * Reihenfolge der Abarbeitung:
+   * Auf Kanal 16 den Funkverkehr strukturieren.
+   * Notmeldungen empfangen und Suchmuster mit beteiligten Einheiten koordinieren.
+ * Erfolgskriterien: Professionelle Führung des Sprechfunkverkehrs im Notfall.
+Frage 40: Funkverkehr vor Ort (On-Scene Communications) mit SAR-Helikopter
+ * Was wichtig ist: Abstimmung von Rettungsmanövern auf dem Not- oder Arbeitskanal.
+ * Reihenfolge der Abarbeitung:
+   * Funkbereitschaft auf Kanal 16 oder zugewiesenem Arbeitskanal herstellen.
+   * PTT drücken: RESCUE HELICOPTER 15 - THIS IS - Eigener Schiffsname.
+   * Windrichtung, Kurs, Fahrt und Decksvorbereitungen durchgeben.
+ * Erfolgskriterien: Präzise, knappe Sprechfunk-Kommunikation für die Winch-Operation.
+Frage 41: Empfangsbestätigung eines Not-Relais einer Küstenfunkstelle
+ * Was wichtig ist: Quittierung einer von einer Küstenfunkstelle verbreiteten Notmeldung.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 lauschen.
+   * PTT drücken.
+   * Küstenfunkstelle ansprechen, Empfang des MAYDAY RELAY bestätigen und eigene Position/Bereitschaft zur Ausschau mitteilen.
+ * Erfolgskriterien: Ordnungsgemäße Bestätigung an das MRCC.
+Frage 42: Abwicklung von Sprechfunkübertragungen während einer aktiven SAR-Suche
+ * Was wichtig ist: Minimierung des Funkverkehrs zur Reinerhaltung des Notkanals.
+ * Reihenfolge der Abarbeitung:
+   * Nur bei Sichtung von Trümmern, Rettungsmitteln oder Personen PTT betätigen.
+   * Meldung kurz und präzise abgeben.
+ * Erfolgskriterien: Strikte Funkdisziplin gewahrt.
+Frage 43: Weiterleitung eines Notalarms bei Ausfall der eigenen DSC-Einheit
+ * Was wichtig ist: Nutzung des reinen Sprechfunks zur Abgabe einer Relais-Meldung.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 direkt anwählen.
+   * MAYDAY RELAY[span_390](start_span)[span_390](end_span)-Prozedur wie unter Frage 36 abarbeiten.
+ * Erfolgskriterien: Vollständiger Ablauf ohne DSC-Nutzung.
+Frage 44: Quittierung und Weiterverarbeitung von eingehenden Mayday-Relay-Sprüchen
+ * *Was wichtig ist*: Auswertung, ob das eigene Schiff nahe genug ist, um an der Suche mitzuwirken.
+ * Reihenfolge der Abarbeitung:
+   * Nachrichteninhalt notieren.
+   * Eigene Position mit Havarieposition vergleichen.
+   * Bei Eignung Küstenfunkstelle per Sprechfunk verständigen.
+ * Erfolgskriterien: Korrekte Lagebeurteilung und operative Reaktion.
+Frage 45: Funkabwicklung nach Rettung aller Personen durch ein drittes Schiff
+ * Was wichtig ist: Information der den Notverkehr leitenden Stelle über die erfolgreiche Bergung.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken: Notverkehrsleiter anfunken und Vollzug der Rettung melden.
+ * Erfolgskriterien: Klarstellung des aktuellen Rettungsstatus über Sprechfunk.
+Kategorie 4: Funkstille (Silence Mayday) & Beendigung des Notverkehrs (Silence Fini)
+Frage 46: Aufforderung zur Funkstille durch den Notverkehrsleiter (Silence Mayday)
+ * Was wichtig ist: Durchsetzung absoluter Notfunkstille bei Störungen durch unberechtigte Funkstellen.
+ * Reihenfolge der Abarbeitung:
+   * Auf Kanal 16 feststellen, dass eine fremde Funkstelle den Notverkehr stört.
+   * PTT drücken.
+   * Störende Funkstelle ansprechen oder ALL STATIONS wählen.
+     4. THIS IS - Eigener Schiffsname (3x) (Notverkehrsleiter).
+      5. Befehl aussprechen: SILENCE MAYDAY.
+   * Mit OUT abschließen.
+ * Erfolgskriterien: Exakte Verwendung der Phrasierung SILENCE MAY[span_160](start_span)[span_160](end_span)DAY durch das leitende Fahrzeug.
+Frage 47: Aufforderung zur Funkstille durch ein nicht-leitendes Schiff (Silence Distress)
+ * Was wichtig ist: Gebieten von Funkstille durch eine Schiffsfunkstelle, die nicht die Einsatzleitung hat.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 verifizieren.
+   * PTT drücken.
+   * Störendes Schiff anrufen: [NAME STÖRENDES SCHIFF] - THIS IS - [EIGENER NAME].
+   * Befehl aussprechen: SILENCE [span_447](start_span)[span_447](end_span)DISTRESS.
+   * Mit OUT beenden.
+ * Erfolgskriterien: Korrekte Unterscheidung zwischen SILENCE MAYDAY (Leitung) und SILENCE DISTRESS (Nicht-Leitung).
+Frage 48: Beendigung des Notverkehrs per Sprechfunk (Silence Fini) durch Küstenfunkstelle
+ * Was wichtig ist: Aufhebung der Funkstille nach Beendigung des Seenotfalls.
+ * Reihenfolge der Abarbeitung:
+   * Auf Kanal 16 den Aufhebungsspruch der Leitstelle abwarten.
+   * Schema aufnehmen: MAYDAY - ALL STATIONS (3x) - TH[span_448](start_span)[span_448](end_span)IS IS - Name der Leitstelle - TIME... - Name Havarist - SILENCE FINI.
+   * Das Verstehen des Formats nachweisen.
+ * Erfolgskriterien: Identifikation des Schlüsselbegriffs SILENCE FINI als Beendigung der Notfunkstille.
+Frage 49: Beendigung des Notverkehrs per Sprechfunk durch den ehemaligen Havaristen
+ * Was wichtig ist: Abgabe der Entwarnung nach Wiederherstellung der eigenen Sicherheit.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken.
+   * MAYDAY - ALL STATIONS (3x) - THIS IS - Eigener Schiffsname (3x) / Rufzeichen / MMSI.
+   * 1510 UTC YACHT FREYBURG RESCUED, ENGINE RUNNING AGAIN, NOT IN DISTRESS ANYMORE.
+        5. S[span_162](start_span)[span_162](end_span)ILENCE FINI - OUT.
+ * Erfolgskriterien: Einwandfreie Strukturierung der Notverkehrsbeendigung.
+Frage 50: Wiederaufnahme des normalen Seefunkdienstes nach Silence Fini
+ * Was wichtig ist: Systemzustand des Funkgeräts nach Aufhebung des Notverkehrs rekonfigurieren.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 auf Hörbereitschaft belassen.
+   * Rauschsperre und Lautstärke prüfen.
+   * Schiffstagebuch-Eintrag vornehmen.
+ * Erfolgskriterien: Rückkehr zum Normalbetrieb regelkonform ausgeführt.
+Frage 51: Abweisen von unberechtigtem Routineverkehr während Notfunkstille
+ * Was wichtig ist: Konsequentes Verweigern von Antworten auf Routineanrufe während Notfunkstille aktiv ist.
+ * Reihenfolge der Abarbeitung:
+   * Routineanruf auf Kanal 16 während Notverkehr wahrnehmen.
+   * Keinesfalls antworten oder auf Arbeitskanal wechseln.
+   * Gegebenenfalls SI[span_267](start_span)[span_267](end_span)LENCE DISTRESS aussenden.
+ * Erfolgskriterien: Absolute Reinerhaltung der Notfrequenz.
+Frage 52: Verhängung partieller Funkstille bei Notfallmaßnahmen
+ * Was wichtig ist: Einschränkung des Funkverkehrs auf bestimmte Arbeitskanäle bei SAR-Einsätzen.
+ * Reihenfolge der Abarbeitung:
+   * Arbeitskanal (z. B. Kanal 67 oder 06) wählen.
+   * PTT drücken: SILENCE DISTRESS aussenden.
+ * Erfolgskriterien: Funkstille auf dem spezifizierten Kanal etabliert.
+Frage 53: Entwarnung per Sprechfunk nach Fehlauslösung von Silence Mayday
+ * Was wichtig ist: Unverzügliches Aufheben fälschlich verhängter Funkstille.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 anwählen.
+   * PTT drücken: Korrekturmeldung senden und Aufhebung bekanntgeben.
+ * Erfolgskriterien: Störung des VHF-Verkehrs unverzüglich geheilt.
+Frage 54: Dokumentation der Notverkehrsbeendigung im Schiffstagebuch
+ * Was wichtig ist: Erfassung des Endes des Notverkehrs.
+ * Reihenfolge der Abarbeitung:
+   * UTC-Zeitpunkt von SILENCE FINI notieren.
+   * Eintrag im Logbuch mit Funkprotokoll abgleichen.
+     *   Erfolgskriterien: Vollständige protokollarische Nachbereitung.
+Frage 55: Rekalibrierung der DSC-Bereitschaft nach Aufhebung der Notlage
+ * Was wichtig ist: Rückstellung aller temporären Alarmstromeinstellungen am DSC-Controller.
+ * Reihenfolge der Abarbeitung:
+   * DSC-Menü öffnen.
+   * Alarm-Historie sichern/löschen.
+   * Standard-Display-Ansicht aktivieren.
+ * Erfolgskriterien: Controller befindet sich im sauberen Standby-Status.
+Kategorie 5: Aufhebung von Fehlalarmen (Distress Cancel)
+Frage 56: Unbeabsichtigtes Auslösen eines DSC-Notalarms – Sofortiges Stornieren am Gerät
+ * Was wichtig ist: Prozedural exakter Abbruch einer fehlerhaften DSC-Distress-Aussendung vor oder unmittelbar nach dem Senden.
+ * Reihenfolge der Abarbeitung:
+   * Bei unbeabsichtigtem Drücken sofort die Taste CANCEL am DSC-Controller betätigen.
+   * Sollte der Alarm bereits auf Kanal 70 herausgegangen sein: Befehl CANCEL DISTRESS ALERT auf dem Display mit ENTER bestätigen.
+   * Der Controller schaltet automatisch auf Kanal 16.
+ * Erfolgskriterien: DSC-Stornierung am Gerät ordnungsgemäß eingeleitet.
+Frage 57: Entwarnungsmeldung per Sprechfunk auf Kanal 16 nach DSC-Fehlalarm
+ * Was wichtig ist: Verpflichtende Aussendung der Sprechfunk-Annullierung an ALL STATIONS nach jedem DSC-Fehlalarm.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 kontrollieren.
+   * PTT drücken.
+   * Anrufgruppe: ALL STATIONS (3x).
+   * Absender: THIS IS - Eigener Schiffsname (3x), Rufzeichen (1x), MMSI (1x).
+         5. Text: PLEASE CANCEL MY DISTRESS ALERT SENT AT 1245 UTC ON CHANNEL 70.
+   * Identifikation: Schiffsname (1x), Rufzeichen (1x), MMSI (1x), UTC-Zeitstempel.
+   * Abschluss: OUT.
+ * Erfolgskriterien: Vollständige Sprechfunk-Entwarnung ohne Verschweigen von MMSI oder Zeit; Abschluss mit OUT.
+Frage 58: Fehlalarm-Aufhebung bei manueller Fehleingabe von Geokoordinaten
+ * Was wichtig ist: Entwarnung, wenn ein Notalarm mit falschen Positionsdaten versehentlich abgesendet wurde.
+ * Reihenfolge der Abarbeitung:
+   * DSC-Reset durchführen.
+   * Auf Kanal 16 Entwarnung senden.
+   * Korrekte Position im Freitext der Sprechfunk-Entwarnung nennen zur Verwirrungsvermeidung.
+ * Erfolgskriterien: Falschpositionierung im Sprechfunk-Cancel berichtigt.
+Frage 59: Direkte Entwarnung an die Küstenfunkstelle nach Fehlauslösung
+*   Was wichtig ist: Gezielte Kontaktaufnahme mit dem MRCC zur Entwarnung bei direkter Erreichbarkeit.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken.
+   * BREMEN RESCUE - THIS IS - Eigener Name / MMSI - CANCEL MY DISTRESS ALERT OF 0915 UTC - FALSE ALERT DUE TO OPERATO[span_170](start_span)[span_170](end_span)R ERROR - OUT.
+ * Erfolgskriterien: Küstenfunkstelle über Bedienerfehler informiert.
+Frage 60: Abbruch eines versehentlich gestarteten DSC-Selbsttests (Distress Test)
+ * Was wichtig ist: Verhindern, dass ein Testmodus in einen realen Notalarm übergeht.
+ * Reihenfolge der Abarbeitung:
+   * Displayanzeige TEST CALL kontrollieren.
+   * Bei Abweichung Taste CLEAR/STOP betätigen.
+ * Erfolgskriterien: Kein Ausstrahlen eines scharfen Notalarms auf Kanal 70.
+#### Frage 61: Stornierung bei Halten der Distress-Taste unter 3 Sekunden
+ * Was wichtig ist: Verstehen des Sicherheits-Timers der Hardware-Taste.
+ * Reihenfolge der Abarbeitung:
+   * Taste DISTRESS vor Ablauf von 3 Sekunden loslassen.
+   * Prüfen, ob der Countdown abbricht.
+   * Hauptbildschirm verifizieren.
+ * Erfolgskriterien: Kein Alarm gesendet; keine Entwarnung auf Kanal 16 erforderlich.
+Frage 62: Wiederholung einer unvollständigen Sprechfunk-Entwarnung
+ * Was wichtig ist: Korrektur, falls bei der ersten Entwarnung die MMSI vergessen wurde.
+ * Reihenfolge der Abarbeitung:
+   * PTT erneut betätigen.
+   * ALL STATIONS ... CORRECTION: MY DISTRESS ALERT SENT AT 1000 UTC WITH MMSI 211234567 IS CANCELL[span_177](start_span)[span_177](end_span)ED - OUT.
+ * Erfolgskriterien: Nachträgliche Vervollständigung aller Pflichtparameter.
+#### Frage 63: Aufhebung eines Notalarms einer Handfunkanlage (VHF Portable)
+ * Was wichtig ist: Entwarnungsprozess für mobile VHF-DSC-Geräte an Bord.
+ * Reihenfolge der Abarbeitung:
+   * Gerätestornierung am Handfunkgerät vornehmen.
+   * Entwarnungsmeldung über Hauptanlage oder Handfunkgerät auf Kanal 16 abgeben.
+ * Erfolgskriterien: Fehlalarm der Zweitanlage regelkonform annulliert.
+Frage 64: Stornierung bei technischen Fehlfunktionen des Transceivers
+ * Was wichtig ist: Handhabung von Dauer-Transmit-Zuständen durch Hardwarefehler.
+ * Reihenfolge der Abarbeitung:
+   * Stromversorgung des Funkgeräts unterbrechen (Hard Reset).
+   * Nach Neustart sofort Kanal 16 anwählen.
+   * Sprechfunk-Entwarnung wegen technischer Störung abgeben.
+ * Erfolgskriterien: Wiederherstellung der Funkordnung auf Kanal 16.
+Frage 65: Dokumentation der Fehlalarm-Stornierung im Schiffstagebuch
+ * Was wichtig ist: Nachweis der Entwarnung gegenüber Schifffahrtsbehörden.
+ * Reihenfolge der Abarbeitung:
+   * Uhrzeit des Fehlalarms und der Entwarnung protokollieren.
+   * Ursache (Bedienfehler/Technik) vermerken.
+ * Erfolgskriterien: Vollständige Dokumentation ausgeführt.
+Kategorie 6: Dringlichkeitsverkehr (Urgency - PAN PAN)
+Frage 66: Editieren und Senden eines DSC-Dringlichkeitsanrufs (Urgency All Ships)
+ * Was wichtig ist: Digitaler Ankündigungsruf einer Dringlichkeitsmeldung auf Kanal 70 an alle Funkstellen.
+ * Reihenfolge der Abarbeitung:
+   * M[span_710](start_span)[span_710](end_span)[span_716](start_span)[span_716](end_span)[span_722](start_span)[span_722](end_span)[span_728](start_span)[span_728](end_span)[span_734](start_span)[span_734](end_span)ENU \rightarrow DSC CALL \rightarrow ALL SH[span_185](start_span)[span_185](end_span)IPS wählen.
+   * Priorität URGENCY anwählen.
+   * Arbeitskanal für das nachfolgende Gespräch im Controller hinterlegen.
+   * DSC-Ruf auf Kanal 70 absenden.
+   * Auf Kanal 16 schalten bzw. Umschaltung verifizieren.
+ * Erfolgskriterien: DSC-Anruf mit Priorität URGENCY erfolgreich an ALL SHIPS übermittelt.
+Frage 67: Absetzen einer Sprechfunk-Dringlichkeitsmeldung auf Kanal 16 (Szenario: Ruderbruch)
+ * Was wichtig ist: Abgabe der Dringlichkeitsmeldung nach dem DSC-Anruf zur Warnung der Schifffahrt.
+ * Reihenfolge der Abarbeitung:
+   * Sendeleistung 25\text{ W} auf Kanal 16 verifizieren.
+   * PTT drücken.
+         3. Dringlichkeitszeichen: PAN PAN (3x).
+         4. Adressat: ALL STATIONS (3x).
+   * Absender: THIS IS - Eigener Schiffsname (3x), Rufzeichen (1x), MMSI (1x).
+   * Position: Geokoordinaten oder relative Lage.
+   * Sachverhalt: RUDDER BROKEN, DRIFTING IN ROUGH SEA TOWARDS SHALLOWS, REQUIRE TUG ASSISTANCE.
+   * Sprechaufforderung: OVER.
+ * Erfolgskriterien: Dreifaches PAN P[span_638](start_span)[span_638](end_span)[span_682](start_span)[span_682](end_span)AN, deutliche Beschreibung des Assistenzbedarfs, Abschluss mit OVER.
+Frage 68: Dringlichkeitsmeldung per Sprechfunk (Szenario: Entmastung ohne akute Sinkegefahr)
+ * Was wichtig ist: Richtige Wahl der Priorität Urgency bei Sachschaden ohne direkte Lebensgefahr.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken.
+   * PAN PAN (3x) - ALL STATIONS (3x) - THIS IS - Name (3x) / Rufzeichen.
+   * MAST BROKEN, RIGGING IN WATER, DANGER TO NAVIGATION, IN POSITION ... - OVER.
+ * Erfolgskriterien: Abgrenzung zum Notfall (MAYDAY) korrekt eingehalten.
+Frage 69: DSC-Dringlichkeitsanruf an eine spezifische Küstenfunkstelle (Medico Call)
+ * Was wichtig ist: Einholung medizinischen Rats per Einzelanruf (Individual Call) mit Priorität Urgency.
+ * Reihenfolge der Abarbeitung:
+   * MENU \rightarrow INDIVIDUAL CALL.
+   * MMSI der Küstenfunkstelle (z. B. 002111230 für Bremen Rescue) eingeben.
+   * Priorität URGENCY wählen.
+   * Ruf senden.
+ * Erfolgskriterien: Gezielter Einzelruf mit Priorität Urgency an die Rettungsleitstelle.
+Frage 70: Absetzen einer Medico-Sprechfunkmeldung auf einem Arbeitskanal
+ * Was wichtig ist: Abwickeln des Funkverkehrs zur medizinischen Beratung auf dem zugewiesenen Kanal.
+ * Reihenfolge der Abarbeitung:
+   * Nach Bestätigung durch die Küstenfunkstelle auf den vereinbarten Arbeitskanal schalten.
+   * PTT drücken.
+   * PAN PAN - BREMEN RESCUE - THIS IS - Eigener Name.
+   * REQUIRE MEDICAL ADVICE, CREW MEMBER WITH SUSPECTED FRACTURE OF ARM - OVER.
+ * Erfolgskriterien: Richtiger Kanalwechsel und korrekte Schilderung des Krankheitsbildes.
+Frage 71: Dringlichkeitsmeldung wegen Treibgut / Gefährdung der Schifffahrt
+ * Was wichtig ist: Warnung anderer Verkehrsteilnehmer vor kollisionsgefährdeten Objekten.
+ * Reihenfolge der Abarbeitung:
+   * DSC-Anruf URGENCY an ALL SHIPS.
+   * Sprechfunk auf Kanal 16: PAN PAN (3x) - [span_195](start_span)[span_195](end_span)ALL STATIONS (3x) ... SEM[span_421](start_span)[span_421](end_span)I-SUBMERGED CONTAINER DRIF[span_274](start_span)[span_274](end_span)TING IN POSITION ... - OVER.
+ * Erfolgskriterien: Gefahrenstelle präzise übermittelt.
+Frage 72: Sprechfunk-Empfangsbestätigung einer Dringlichkeitsmeldung
+ * Was wichtig ist: Relevante Quittierung einer Dringlichkeitsmeldung durch ein Schiff, wenn dieses direkte Hilfe anbieten kann.
+ * Reihenfolge der Abarbeitung:
+   * Auf Kanal 16 lauschen.
+   * PTT drücken.
+   * Sender der Dringlichkeitsmeldung anrufen, Empfang des PAN PAN bestätigen, Position und Hilfemöglichkeiten anbieten.
+ * Erfolgskriterien: Phonetisch einwandfreie Sprechfunkquittierung.
+Frage 73: Dringlichkeitsmeldung bei Ausfall der Hauptmaschine in dicht befahrenem Trennungsgebiet
+ * Was wichtig ist: Dringlichkeitsmeldung zur Inanspruchnahme von Schlepphilfe vor Eintritt einer Notlage.
+ * Reihenfolge der Abarbeitung:
+   * DSC URGENCY ALL SHIPS senden.
+   * Sprechfunk Kanal 16: PAN PAN (3x) ... ENGINE FAILURE IN TRAFFIC SEPARATION SCHEME, REQUIRE TUG ASSISTANCE - OVE[span_198](start_span)[span_198](end_span)R.
+ * Erfolgskriterien: Situationsbezogene Dringlichkeit ordnungsgemäß übermittelt.
+Frage 74: Annullierung / Beendigung einer Dringlichkeitsmeldung (PAN PAN CANCEL)
+ * Was wichtig ist: Verpflichtende Entwarnung per Sprechfunk an ALL STATIONS, wenn die Dringlichkeitsursache behoben ist.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken.
+   * Anrufgruppe: PAN PAN (1x) - A[span_424](start_span)[span_424](end_span)LL STATIO[span_711](start_span)[span_711](end_span)[span_717](start_span)[span_717](end_span)[span_723](start_span)[span_723](end_span)[span_729](start_span)[span_729](end_span)[span_735](start_span)[span_735](end_span)NS (3x).
+   * Absender: THIS IS - Eigener Schiffsname (3x), Rufzeichen (1x), MMSI (1x).
+   * Text: PLEASE CANCEL MY PAN PAN MESSAGE OF 1400 UTC, ENGINE RUNNING AGAIN.
+   * Abschluss: OUT.
+ * Erfolgskriterien: Verwendung des Schlüsselworts CANCEL MY PAN PAN MESSAGE, Beendigung zwingend mit OUT[span_500](start_span)[span_500](end_span)[span_571](start_span)[span_571](end_span).
+Frage 75: Kanalwechsel von Kanal 16 auf einen Arbeitskanal im Dringlichkeitsverkehr
+ * Was wichtig ist: Freihaltung von Kanal 16 für nachfolgende Notrufe durch Ausweichen auf Schiff-Schiff-Kanäle.
+ * Reihenfolge der Abarbeitung:
+   * In der Dringlichkeitsmeldung den Ziel-Arbeitskanal ankündigen (z. B. SWITCH TO VHF CHANNEL 72).
+   * Am Funkgerät unmittelbar Kanal 72 anwählen.
+   * Lautstärke und Squelch auf Kanal 72 nachjustieren.
+   * Funkverkehr dort fortsetzen.
+ * Erfolgskriterien: Nahtloser Übergang der Kommunikation auf den Sekundärkanal.
+Frage 76: Abwicklung von Dringlichkeitsverkehr bei gleichzeitigem Notverkehr auf Kanal 16
+ * Was wichtig ist: Ausweichen des Dringlichkeitsanrufs auf Arbeitskanäle, wenn Kanal 16 durch ein MAYDAY gesperrt ist.
+ * Reihenfolge der Abarbeitung:
+   * DSC-Anruf URGENCY ALL SHIPS mit zugewiesenem Arbeitskanal auf Kanal 70 aussenden.
+     2. Sprechfunkmeldung direkt auf dem gewählten Arbeitskanal abgeben.
+ * Erfolgskriterien: Störungsfreie Abwicklung abseits der belasteten Notfrequenz.
+Frage 77: Weiterleitung einer Dringlichkeitsmeldung (Urgency Relay)
+ * Was wichtig ist: Weitergabe einer Beobachtung einer fremden Gefahr durch ein drittes Schiff.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken.
+   * PAN PAN (3x) - ALL STATIONS (3x) - THIS IS - Eigener Name (3x) - FOLLOWING RECEIVED FROM....
+ * Erfolgskriterien: Fremde Dringlichkeit regelkonform weitergeleitet.
+Frage 78: Dringlichkeitsmeldung wegen Ausfall des Echolots bei Nacht in Flachwasser
+ * Was wichtig ist: Meldung drohender Grundberührung als Dringlichkeitsfall.
+ * Reihenfolge der Abarbeitung:
+   * DSC URGENCY auslösen.
+   * Sprechfunk Kanal 16 absetzen.
+ * Erfolgskriterien: Korrekter Inhalt bezüglich Navigationshilfeanforderung.
+Frage 79: Dringlichkeitsmeldung bei Wassereinbruch unter eigener Pumpenbeherrschung
+ * Was wichtig ist: Einstufung als PAN PAN (nicht MAYDAY), da die Lage unter Kontrolle ist.
+ * Reihenfolge der Abarbeitung:
+   * DSC URGENCY an ALL SHIPS.
+   * Sprechfunk: PAN PAN ... WATER LEAKAGE UNDER CONTROL[span_313](start_span)[span_313](end_span)[span_351](start_span)[span_351](end_span) WITH OWN PUMPS, REQUEST STANDBY OF NEARBY SHIPS - OVER.
+ * Erfolgskriterien: Richtige Differenzierung der Gefahrenstufe.
+Frage 80: Re-Konditionierung des Geräts nach Beendigung der Dringlichkeit
+ * Was wichtig ist: Wiederherstellung des Standard-Empfangszustands nach Annullierung.
+ * Reihenfolge der Abarbeitung:
+   * Rückkehr zu Kanal 16.
+   * Kontrolle der DSC-Kanal-70-Wache.
+ * Erfolgskriterien: Funkgerät betriebsbereit auf Wache.
+Kategorie 7: Sicherheitsverkehr (Safety - SECURITE)
+Frage 81: Editieren und Senden eines DSC-Sicherheitsanrufs (Safety All Ships)
+ * Was wichtig ist: Digitale Ankündigung von Sicherheitsmeldungen (Wetter, Navigationsgefahren).
+ * Reihenfolge der Abarbeitung:
+   * MENU \rightarrow DSC CALL \rightarrow ALL SHIPS anwählen.
+   * Priorität SAFETY auswählen.
+   * Arbeitskanal als Sprechfunkkanal festlegen.
+   * DSC-Ruf auf Kanal 70 absenden.
+   * Das Gerät wechselt auf den angegebenen Kanal oder Kanal 16.
+ * Erfolgskriterien: DSC-Ruf mit Priorität SAFETY fehlerfrei übertragen.
+Frage 82: Absetzen einer Sicherheitsmeldung per Sprechfunk (Szenario: Unbeleuchtetes Seezeichen)
+ * Was wichtig ist: Abgabe einer Navigationswarnung zum Schutz des Seeverkehrs.
+ * Reihenfolge der Abarbeitung:
+   * Sendeleistung 25\text{ W} auf Kanal 16 oder Arbeitskanal prüfen.
+   * PTT drücken.
+   * Sicherheitszeichen: SECURITE (3x gesprochen: SAY-CUR-EE-TAY).
+   * Adressat: ALL STATIONS (3x).
+   * Absender: THIS IS - Eigener Schiffsname (3x), Rufzeichen (1x).
+   * Inhalt: LIGHT BUOY BUXTEHUDE 2 IN POSITION ... UNLIT.
+   * Abschluss: OUT.
+ * Erfolgskriterien: Dreifaches SECURITE, lückenlose Verortung des Hindernisses, regelkonformer Abschluss mit OUT.
+Frage 83: Sprechfunk-Sicherheitsmeldung (Szenario: Treibendes Container-Teil)
+ * Was wichtig ist: Durchgabe konkreter Hinderniskoordinaten.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 / Arbeitskanal wählen.
+   * PTT drücken.
+   * SECURITE (3x) - ALL STATIONS (3x) - THIS IS - Eigener Name (3x).
+   * FLOATING TIMBER HAZARD TO NAVIGATION IN POSITION ... SHIPS KEPT SHARP LOOKOUT - OUT.
+ * Erfolgskriterien: Korrekter Aufbau und Abschluss einer Navigationsmeldung.
+Frage 84: Sicherheitsmeldung wegen angekündigtem Starkwind / Sturm
+ * Was wichtig ist: Durchgabe von Wetterwarnungen durch Küstenfunkstellen oder weiterleitende Schiffe.
+ * Reihenfolge der Abarbeitung:
+   * Ankündigung per DSC SAFETY auf Kanal 70.
+     2. Ausweichen auf Arbeitskanal.
+   * Sprechfunk: SECURITE ... GALE WARNING FOR G[span_647](start_span)[span_647](end_span)[span_691](start_span)[span_691](end_span)ERMAN BIGHT FORCE 8 EXPECTED - OUT.
+ * Erfolgskriterien: Wetterwarnung nach Schema übermittelt.
+Frage 85: Sicherheitsmeldung wegen Ausfalls eines Hauptnavigationssignals
+ * Was wichtig ist: Information über Systemstörungen im Seegebiet.
+ * Reihenfolge der Abarbeitung:
+   * DSC Anruf SAFETY ALL SHIPS.
+   * Sprechfunk SECURITE ... DGPS STATION RÜGEN OFF AIR - OUT.
+ * Erfolgskriterien: Ordnungsgemäßer Sicherheitsspruch.
+Frage 86: Sicherheitsmeldung bezüglich Vermessungsarbeiten oder Kabelverlegearbeiten
+ * Was wichtig ist: Warnung vor eingeschränkt manövrierfähigen Arbeitsschiffen.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 wählen.
+   * PTT drücken: SECURITE (3x) ... CABLE LAYING OPERATIONS BY VESSE[span_523](start_span)[span_523](end_span)[span_594](start_span)[span_594](end_span)L VIKING IN POSITION ... WIDE BERTH REQUESTED - OUT.
+ * Erfolgskriterien: Warnhinweis regelkonform verbreitet.
+Frage 87: Empfang einer Sicherheitsmeldung und Kanalwechselanweisungen folgen
+ * Was wichtig ist: Nach DSC-Empfang auf den angekündigten Arbeitskanal wechseln.
+ * Reihenfolge der Abarbeitung:
+   * DSC-Alarmton am Gerät quittieren (CLEAR).
+   * Angezeigten Arbeitskanal am Gerät einstellen.
+   * Rauschsperre anpassen und Meldung mitlesen/abfragen.
+ * Erfolgskriterien: Richtige Nachführung des Arbeitskanals am Funkgerät.
+Frage 88: Annullierung / Aufhebung einer Sicherheitsmeldung (SECURITE CANCEL)
+ * Was wichtig ist: Aufhebung der Warnung, wenn die Gefahr nicht mehr besteht.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 / Arbeitskanal einstellen.
+   * PTT drücken.
+   * SECURITE (1x) - ALL STATIONS (3x) - THIS IS - Eigener Name (3x).
+   * CANCEL MY SECURITE MESSAGE OF 0800 UTC, DRIFTING CONTAINER HAS BE[span_208](start_span)[span_208](end_span)EN RECOVERED - OUT.
+ * Erfolgskriterien: Verwendung von CANCEL MY SECURITE MESSAGE[span_750](start_span)[span_750](end_span)[span_764](start_span)[span_764](end_span)[span_778](start_span)[span_778](end_span) und Beendigung mit OUT.
+Frage 89: Sicherheitsmeldung wegen Schießübungen von Marinefahrzeugen
+ * Was wichtig ist: Ankündigung von Sperrgebieten per Sicherheitsfunk.
+ * Reihenfolge der Abarbeitung:
+   * DSC SAFETY empfangen.
+   * Sprechfunk auf Arbeitskanal abhören und Geokoordinaten des Sperrgebiets notieren.
+ * Erfolgskriterien: Exakte Aufzeichnung der Koordinaten der Warnzone.
+Frage 90: Sicherheitsmeldung bezüglich Treibeis / Eisgefahr
+ * Was wichtig ist: Sicherheitsmeldung in nordischen Revieren.
+ * Reihenfolge der Abarbeitung:
+   * SECURITE (3x) - ALL STATIONS (3x) per Sprechfunk aussenden.
+   * Positionsangabe des Eisvorkommens übermitteln.
+ * Erfolgskriterien: Korrekter Aufbau nach VO Funk.
+Frage 91: Überprüfung der Sendeleistung vor Abgabe einer Sicherheitsmeldung
+ * Was wichtig ist: Sicherheitsmeldungen erfordern stets hohe Sendeleistung (25\text{ W}) zur Maximierung der Reichweite.
+ * Reihenfolge der Abarbeitung:
+   * Taste HI/LO prüfen.
+   * Displaykontrolle auf 25\text{ W}.
+   * Sicherheitsspruch absenden.
+ * Erfolgskriterien: Aussendung erfolgt nachweislich mit 25\text{ W} Sendeleistung.
+Frage 92: Dokumentation von Empfang und Inhalt von Sicherheitsmeldungen
+ * Was wichtig ist: Schriftliche Fixierung im Schiffstagebuch.
+ * Reihenfolge der Abarbeitung:
+   * Inhalt des Spruchs protokollieren.
+   * Relevanz für den eigenen Kurs prüfen.
+ * Erfolgskriterien: Vollständige Eintragung im Funklogbuch.
+Kategorie 8: Routineverkehr, Küstenfunkstellen & Gerätesteuerung
+Frage 93: Editieren und Senden eines DSC-Routineanrufs an eine Seefunkstelle (Individual Call)
+ * Was wichtig ist: Gezielte digitale Kontaktaufnahme mit einem anderen Schiff unter Angabe eines Arbeitskanals.
+ * Reihenfolge der Abarbeitung:
+      1. MENU \rightarrow DSC CALL \rightarrow INDIVIDUAL CALL wählen.
+    2. Ziel-MMSI manuell eingeben oder aus dem Adressbuch wählen.
+   3. Intership-Arbeitskanal auswählen (z. B. Kanal 69, 72 oder 77).
+   4. Call aussenden.
+   5. Das Gerät wartet auf die DSC-Bestätigung der Gegenstelle und schaltet dann automatisch auf den Arbeitskanal um.
+ * Erfolgskriterien: Korrekte Adressierung der fremden MMSI, Auswahl eines gültigen Simplex-Arbeitskanals.
+Frage 94: Sprechfunk-Abwicklung eines Routinegesprächs mit einer Seefunkstelle
+ * Was wichtig ist: Standard-Funkgespräch auf dem vereinbarten Arbeitskanal nach erfolgter DSC-Quittierung.
+ * Reihenfolge der Abarbeitung:
+   * Sicherstellen, dass der zugewiesene Arbeitskanal aktiv ist.
+   * Sendeleistung prüfen (1\text{ W} im Nahbereich, 25\text{ W} auf Distanz).
+   * PTT drücken.
+   * Anruf: Schiffsname der Gegenstelle (1-3x), THIS IS (1x), Eigener Schiffsname (1-3x), Rufzeichen (1x).
+   * Text: Abgabe der Routinemeldung (z. B. Standortabgleich).
+   * Sprechaufforderung: O[span_213](start_span)[span_213](end_span)VER.
+ * Erfolgskriterien: Vermeidung von Kanal 16 für das Gespräch, Einhaltung des Anrufschemas, Abschluss mit OVER.
+Frage 95: Empfang eines DSC-Routineanrufs und Sprechfunk-Bestätigung auf dem Arbeitskanal
+ * Was wichtig ist: Reaktion des Empfängers auf einen eingehenden Individual Call.
+ * Reihenfolge der Abarbeitung:
+   1. Eingehenden DSC-Ruf am Display ablesen (MMSI des Anrufers und Arbeitskanal werden angezeigt).
+   2. Taste ACCEPT / ACK drücken.
+   3. PTT drücken.
+    4. Sprechfunkantwort: Anrufername - THIS IS - Eigener Name - READ YOU LOUD AND CLEAR, GO AHEAD - OVER.
+ * Erfolgskriterien: DSC-Quittierung am Gerät bestätigt, Einleitung des Sprechfunks auf dem vorgeschriebenen Arbeitskanal.
+Frage 96: Editieren und Senden eines DSC-Routineanrufs an eine Küstenfunkstelle
+ * Was wichtig ist: Digitale Kontaktaufnahme mit einer Revierzentrale oder Küstenfunkstelle.
+ * Reihenfolge der Abarbeitung:
+   * MENU \rightarrow DSC CALL \rightarrow COAST STATION CALL ansteuern.
+   * MMSI der Küstenfunkstelle (z. B. 002111200) eingeben.
+   * Ruf absenden.
+   * Umschaltung auf den von der Küstenfunkstelle zugewiesenen Kanal abwarten.
+ * Erfolgskriterien: Korrekte Verwendung einer Küstenfunkstellen-MMSI (beginnend mit 00).
+Frage 97: Routine-Sprechfunkverkehr mit einer Küstenfunkstelle (Revierzentrale)
+ * Was wichtig ist: Anmeldung beim VTS (Vessel Traffic Service) zur Durchfahrt eines Revierbereichs.
+ * Reihenfolge der Abarbeitung:
+   * Vorgeschriebenen Revierkanal einstellen.
+   * Sendeleistung bei Bedarf anpassen.
+   * PTT drücken.
+   * Anruf: JADE TRAFFIC (3x) - THIS IS - Eigener Schiffsname (3x), Rufzeichen (1x).
+   * Text: ENTERING REVUE AREA AT BUOY 12, INBOUND FOR WILHELMSHAVEN.
+   * Sprechaufforderung: OV[span_453](start_span)[span_453](end_span)ER.
+ * Erfolgskriterien: Phonetisch korrekte Abwicklung auf dem offiziellen Revierkanal.
+Frage 98: Kanalwechsel unter Verwendung der Schnellwahltaste 16/9
+ * Was wichtig ist: Beherrschung der Hardware-Direkttasten am Gerät zur Rückkehr auf den Notkanal.
+ * Reihenfolge der Abarbeitung:
+   * Nach Beendigung eines Routinegesprächs die Taste 16/9 betätigen.
+   * Displayanzeige verifizieren: Kanal 16 ist sofort wieder aktiv.
+   * Squelch- und Lautstärkekontrolle durchführen.
+ * Erfolgskriterien: Unverzügliche Wiederherstellung der Hörbereitschaft auf Kanal 16.
+Frage 99: Durchführung eines DSC-Selbsttests (DSC Self-Test)
+ * Was wichtig ist: Überprüfung der internen Modems und Funktionen der Funkanlage ohne Abstrahlung eines Signals.
+ * Reihenfolge der Abarbeitung:
+   * MENU \rightarrow SYSTEM SETUP \rightarrow TEST / DSC TEST aufrufen.
+   * Eigene MMSI als Testziel selektieren oder geräteinternen Loopback-Test wählen.
+   * Test ausführen und Systemmeldung TEST OK verifizieren.
+ * Erfolgskriterien: Durchführung eines geräteinternen Tests ohne Aussendung von HF-Energie auf Kanal 70.
+Frage 100: Abfrage des DSC-Empfangsspeichers für Routineanrufe
+ * Was wichtig ist: Nachträgliches Auslesen verpasster Routineanrufe im Gerät.
+ * Reihenfolge der Abarbeitung:
+   * Menü CALL LOG \rightarrow [span_439](start_span)[span_439](end_span)ROUTINE LOG öffnen.
+   * Eintragsliste durchblättern.
+   * MMSI des Anrufers, Zeitstempel und vorgeschlagenen Kanal ermitteln.
+ * Erfolgskriterien: Vollständiges Auslesen der Verbindungsdaten aus dem Protokollspeicher.
+Frage 101: Verwendung des internationalen Phonetischen Alphabets (NATO-Alphabet)
+ * Was wichtig ist: Fehlerfreie Buchstabierung von Eigennamen, Rufzeichen und Positionsdaten bei schlechten Empfangsbedingungen.
+ * Reihenfolge der Abarbeitung:
+   * PTT drücken.
+   * Buchstabierung ankündigen: I SPELL....
+   * Eigennamen phonetisch buchstabieren (z. B. DECKER \rightarrow DELTA ECHO CHARLIE KILO ECHO ROMEO).
+ * Erfolgskriterien: 100 % fehlerfreie Verwendung der offiziellen NATO-Buchstabierbegriffe.
+Frage 102: Übermittlung von Zahlenfolgen im Sprechfunkverkehr
+ * Was wichtig ist: Richtige Sprechweise von Zahlen und Positionen im Seefunk.
+ * Reihenfolge der Abarbeitung:
+   * PTT drücken.
+   * Geokoordinaten als Einzelziffern aussprechen (z. B. 54^\circ 03'\text{ N} \rightarrow FIVE FOUR DEGREES ZERO THREE MINUTES NORTH).
+ * Erfolgskriterien: Vermeidung von zusammengesetzten Zahlworten, strikte Nutzung von Einzelziffern.
+Frage 103: Beendigung eines Routinefunkverkehrs (Abschluss mit OUT)
+ * Was wichtig ist: Prozeduraler Beendigungsbefehl nach Abschluss des Informationsaustauschs.
+ * Reihenfolge der Abarbeitung:
+   * Letzten Satz im Routinegespräch sprechen.
+   * Beendigungsphrase anfügen: EIGENER SCHIFFSNAME - OUT.
+   * PTT loslassen.
+   * Gerät auf Kanal 16 zurückstellen.
+ * Erfolgskriterien: Verwendung des Worts OUT zur Signalisierung, dass keine Antwort mehr erwartet wird.
+   
+Frage 104: Umschalten auf Hafenfunkkanäle / Nautische Auskunftsfunkstellen
+ * Was wichtig ist: Manuelle Anwahl spezifischer Hafenfunkkanäle im Nahbereich.
+ * Reihenfolge der Abarbeitung:
+   * Geforderten Kanal (z. B. Kanal 11 für Port Control) wählen.
+   * Sendeleistung auf 1\text{ W} reduzieren.
+   * Squelch prüfen.
+ * Erfolgskriterien: Hafenkanal mit verminderter Sendeleistung betriebsbereit.
+Frage 105: Wiederherstellung der dauerhaften Überwachung von Kanal 16 und Kanal 70
+ * Was wichtig ist: Das Funkgerät nach Beendigung aller Aufgaben in den normkonformen GMDSS-Standby-Zustand versetzen.
+ * Reihenfolge der Abarbeitung:
+   * Kanal 16 im Hauptdisplay einstellen.
+   * Sendeleistung auf 25\text{ W} zurücksetzen.
+   * Lautstärke auf Raumpegel einstellen.
+   * Squelch an der Rauschgrenze arretieren.
+   * Verifizieren, dass der DSC-Wachempfänger aktiv auf Kanal 70 mithört.
+ * Erfolgskriterien: Das VHF-DSC-System erfüllt 100 % der gesetzlichen Vorgaben für die Wache im Seefunkdienst.
+Evaluierungs- und Bewertungsmatrix für Simulator-Logiken
+Für die technische Implementierung in einer Simulator-Engine sind die Prüfkriterien der 105 Aufgaben in die nachfolgende Bewertungs- und Auswertungslogik zu übersetzen:
+| Parameter / Kategorie | Valider Simulator-Zustand | Kritischer Fehler (Prüfung nicht bestanden) |
+|---|---|---|
+| Betriebsmodus | Seefunk / GMDSS | Aktivierter ATIS-Modus während der SRC-Prüfung. |
+| DSC-Not-Acknowledge | Keine manuelle DSC-Bestätigung bei empfangenem Distress Alert. | Ausführung einer DSC-Empfangsbestätigung durch die Schiffsfunkstelle. |
+| Notanruf-Taste | Tastenhaltezeit \ge 3\text{ Sekunden}. | Tastenhaltezeit < 3\te[span_455](start_span)[span_455](end_span)xt{ Sekunden} (Fehlauslösung/Abbruch). |
+| Sprechfunk-Reihenfolge | 1. DSC-Aussendung (Kanal 70)
+2. Kanalwechsel auf Ch 16
+3. Sprechfunkmeldung | Abgabe der Notmeldung per Sprechfunk ohne vorherigen DSC-Alarm (sofern DSC funktionsfähig). |
+| Sendeleistung | 25\text{ W} bei Not, Dringlichkeit, Sicherheit
+[span_458](start_span)[span_458](end_span)1\text{ W} bei Hafenfunk / Routine-Nahbereich | Aussendung von Notrufen mit 1\text{ W} Sendeleistung. |
+| Abschlussphrasen | OVER bei Aufforderung zur Antwort
+OUT bei Informationsmeldungen / Beendigung | Verwechslung oder Fehlen von OVER/OUT. |
+| Fehlalarm-Stornierung | 1. Stornierung am Controller
+2. Sprechfunk-Entwarnung auf Ch 16 an ALL STATIONS unter Nennung aller Identifikatoren | Schweigen im Sprechfunk nach Fehlauslösung des DSC-Notalarms. |
+Fazit und Implementierungsempfehlungen
+Die erfolgreiche Entwicklung eines Simulators für die praktische SRC-Seefunkprüfung erfordert eine exakte Kopplung zwischen der virtuellen Hardware-Bedienung (Knöpfe, Displays, Notfalltasten, Menüstrukturen) und einem Spracherkennungs- bzw. Ablaufschema-Evaluator.
+Der bereitgestellte Katalog aus 105 detaillierten Aufgaben deckt das gesamte Spektrum ab – von Pflichtaufgaben wie dem Auslösen und der Entwarnung von DSC-Notalarmen bis hin zu sonstigen Fertigkeiten wie Kanalwechseln, Speicherabfragen und Routine-Verbindungen mit Küstenfunkstellen. Durch die strikte Berücksichtigung der in jeder Aufgabe beschriebenen Wichtigkeiten, Abarbeitungsreihenfolgen und Erfolgskriterien lässt sich eine automatisierte Prüfungslogik programmieren, die dem Prüfling ein exaktes Feedback entsprechend den Durchführungsrichtlinien von DSV und DMYV bietet.
